@@ -1,12 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Home, PlusCircle, Cookie, Info } from "lucide-react";
+import { Home, PlusCircle, Cookie, TrendingUp, Trophy } from "lucide-react";
 
 const navItems = [
   { path: "/", icon: Home, label: "Home" },
   { path: "/add", icon: PlusCircle, label: "Add" },
   { path: "/jar", icon: Cookie, label: "My Jar" },
-  { path: "/about", icon: Info, label: "About" },
+  { path: "/stats", icon: TrendingUp, label: "Stats" },
+  { path: "/badges", icon: Trophy, label: "Badges" },
 ];
 
 export function Navigation() {
@@ -23,17 +24,11 @@ export function Navigation() {
               <li key={path}>
                 <Link
                   to={path}
-                  className={`
-                    flex flex-col items-center gap-1 px-4 py-2 rounded-xl transition-colors
-                    ${isActive 
-                      ? "text-primary" 
-                      : "text-muted-foreground hover:text-foreground"
-                    }
-                  `}
+                  className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
                   aria-current={isActive ? "page" : undefined}
                 >
                   <div className="relative">
-                    <Icon className="h-6 w-6" />
+                    <Icon className="h-5 w-5" />
                     {isActive && (
                       <motion.div
                         layoutId="nav-indicator"
@@ -42,7 +37,7 @@ export function Navigation() {
                       />
                     )}
                   </div>
-                  <span className="text-xs font-medium">{label}</span>
+                  <span className="text-[10px] font-medium">{label}</span>
                 </Link>
               </li>
             );

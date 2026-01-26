@@ -3,15 +3,22 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Layout } from "@/components/Layout";
 import { WinJar } from "@/components/WinJar";
 import { WinCard } from "@/components/WinCard";
+import { WeeklyStats } from "@/components/WeeklyStats";
+import { BadgeDisplay } from "@/components/BadgeDisplay";
+import { ShareableWin } from "@/components/ShareableWin";
 import { getWins, deleteWin } from "@/lib/storage";
 import { getNextMilestone } from "@/lib/milestones";
 import type { Win } from "@/lib/storage";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Trophy, Target } from "lucide-react";
+import { PlusCircle, Trophy, Target, Share2 } from "lucide-react";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function MyJar() {
   const [wins, setWins] = useState<Win[]>([]);
+  const [selectedWin, setSelectedWin] = useState<Win | null>(null);
+  const [showShare, setShowShare] = useState(false);
+  const { theme } = useTheme();
 
   useEffect(() => {
     setWins(getWins());
@@ -22,11 +29,16 @@ export default function MyJar() {
     setWins(getWins());
   };
 
+  const handleShare = (win: Win) => {
+    setSelectedWin(win);
+    setShowShare(true);
+  };
+
   const nextMilestone = getNextMilestone(wins.length);
 
   return (
     <Layout>
-      <div className="pt-2 page-enter">
+      <div className={`pt-2 page-enter min-h-screen bg-gradient-to-br ${theme.bg} transition-colors duration-500`}>
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -53,6 +65,18 @@ export default function MyJar() {
         >
           <WinJar wins={wins} />
         </motion.div>
+
+        {/* Badges Preview */}
+        {wins.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            className="mb-6"
+          >
+            <BadgeDisplay wins={wins} />
+          </motion.div>
+        )}
 
         {/* Milestone Progress */}
         {nextMilestone && wins.length > 0 && (
@@ -84,6 +108,18 @@ export default function MyJar() {
           </motion.div>
         )}
 
+        {/* Weekly Stats */}
+        {wins.length >= 3 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+            className="mb-6"
+          >
+            <WeeklyStats wins={wins} />
+          </motion.div>
+        )}
+
         {/* Wins List */}
         {wins.length > 0 ? (
           <div className="space-y-3">
@@ -107,6 +143,7 @@ export default function MyJar() {
                   win={win}
                   index={index}
                   onDelete={handleDelete}
+                  onShare={handleShare}
                 />
               ))}
             </AnimatePresence>
@@ -146,6 +183,18 @@ export default function MyJar() {
           </motion.div>
         )}
       </div>
+
+      {/* Share Modal */}
+      {selectedWin && (
+        <ShareableWin
+          win={selectedWin}
+          isOpen={showShare}
+          onClose={() => {
+            setShowShare(false);
+            setSelectedWin(null);
+          }}
+        />
+      )}
     </Layout>
   );
 }
