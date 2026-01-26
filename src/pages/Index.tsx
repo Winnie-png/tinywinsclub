@@ -2,15 +2,18 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { WinJar } from "@/components/WinJar";
+import { BadgeDisplay } from "@/components/BadgeDisplay";
 import { Button } from "@/components/ui/button";
 import { getWins } from "@/lib/storage";
 import { getNextMilestone } from "@/lib/milestones";
-import { PlusCircle, Sparkles, Heart } from "lucide-react";
+import { PlusCircle, Sparkles, Heart, TrendingUp, Trophy } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { Win } from "@/lib/storage";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const Index = () => {
   const [wins, setWins] = useState<Win[]>([]);
+  const { theme } = useTheme();
 
   useEffect(() => {
     setWins(getWins());
@@ -20,7 +23,7 @@ const Index = () => {
 
   return (
     <Layout>
-      <div className="flex flex-col items-center text-center pt-4 page-enter">
+      <div className={`flex flex-col items-center text-center pt-4 page-enter min-h-screen bg-gradient-to-br ${theme.bg} transition-colors duration-500`}>
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -72,6 +75,27 @@ const Index = () => {
           </Button>
         </motion.div>
 
+        {/* Quick Links */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="flex gap-3 mt-4"
+        >
+          <Button variant="outline" size="sm" asChild className="rounded-full gap-1">
+            <Link to="/stats">
+              <TrendingUp className="h-4 w-4" />
+              Stats
+            </Link>
+          </Button>
+          <Button variant="outline" size="sm" asChild className="rounded-full gap-1">
+            <Link to="/badges">
+              <Trophy className="h-4 w-4" />
+              Badges
+            </Link>
+          </Button>
+        </motion.div>
+
         {/* Milestone Teaser */}
         {nextMilestone && wins.length > 0 && (
           <motion.div
@@ -83,6 +107,18 @@ const Index = () => {
             <p className="text-sm text-foreground">
               <span className="font-medium">{nextMilestone.count - wins.length}</span> more wins to {nextMilestone.emoji}
             </p>
+          </motion.div>
+        )}
+
+        {/* Badge Preview */}
+        {wins.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.65 }}
+            className="mt-6 w-full max-w-sm"
+          >
+            <BadgeDisplay wins={wins} />
           </motion.div>
         )}
 

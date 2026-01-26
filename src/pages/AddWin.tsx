@@ -4,37 +4,60 @@ import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { MoodSelector } from "@/components/MoodSelector";
 import { Confetti } from "@/components/Confetti";
+import { MilestoneModal } from "@/components/MilestoneModal";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { saveWin, getWins } from "@/lib/storage";
 import { getRandomAffirmation } from "@/lib/affirmations";
-import { getMilestoneMessage, getMoodTheme } from "@/lib/milestones";
-import { Send, ArrowLeft, Sparkles } from "lucide-react";
+import { getMilestoneMessage, getMoodTheme, Milestone } from "@/lib/milestones";
+import { getRecentlyEarnedBadge, Badge } from "@/lib/badges";
+import { Send, ArrowLeft, Sparkles, Award } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function AddWin() {
   const navigate = useNavigate();
+  const { setMood: setThemeMood, theme } = useTheme();
   const [text, setText] = useState("");
   const [mood, setMood] = useState("😊");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [affirmation, setAffirmation] = useState("");
-  const [milestone, setMilestone] = useState<{ message: string; emoji: string } | null>(null);
+  const [milestone, setMilestone] = useState<Milestone | null>(null);
+  const [showMilestoneModal, setShowMilestoneModal] = useState(false);
+  const [newBadge, setNewBadge] = useState<Badge | null>(null);
 
-  const theme = getMoodTheme(mood);
+  const moodTheme = getMoodTheme(mood);
+
+  // Update global theme when mood changes
+  useEffect(() => {
+    setThemeMood(mood);
+  }, [mood, setThemeMood]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!text.trim()) return;
 
     setIsSubmitting(true);
+    const previousCount = getWins().length;
     saveWin({ text: text.trim(), mood });
     
-    const winCount = getWins().length;
+    const wins = getWins();
+    const winCount = wins.length;
     const milestoneMsg = getMilestoneMessage(winCount);
+    
+    // Check for new badges
+    const earnedBadge = getRecentlyEarnedBadge(wins, previousCount);
+    if (earnedBadge) {
+      setNewBadge(earnedBadge);
+    }
     
     if (milestoneMsg) {
       setMilestone(milestoneMsg);
+      // Show milestone modal after a brief delay
+      setTimeout(() => {
+        setShowMilestoneModal(true);
+      }, 1500);
     }
     
     setAffirmation(getRandomAffirmation());
@@ -42,8 +65,17 @@ export default function AddWin() {
 
     // Wait for celebration, then redirect
     setTimeout(() => {
-      navigate("/jar");
+      if (!milestoneMsg) {
+        navigate("/jar");
+      }
     }, 3000);
+  };
+
+  const handleMilestoneClose = () => {
+    setShowMilestoneModal(false);
+    setTimeout(() => {
+      navigate("/jar");
+    }, 500);
   };
 
   const isValid = text.trim().length > 0;
@@ -51,8 +83,13 @@ export default function AddWin() {
   return (
     <Layout>
       <Confetti trigger={showConfetti} intensity="high" />
+      <MilestoneModal 
+        milestone={milestone} 
+        isOpen={showMilestoneModal} 
+        onClose={handleMilestoneClose} 
+      />
       
-      <div className="pt-2 page-enter">
+      <div className={`pt-2 page-enter min-h-screen bg-gradient-to-br ${theme.bg} transition-colors duration-500`}>
         {/* Back Link */}
         <Link 
           to="/" 
@@ -91,7 +128,7 @@ export default function AddWin() {
             >
               {/* Text Input */}
               <motion.div 
-                className={`card-cozy p-4 bg-gradient-to-br ${theme.bg}`}
+                className={`card-cozy p-4 bg-gradient-to-br ${moodTheme.bg}`}
                 whileHover={{ scale: 1.01 }}
                 transition={{ duration: 0.2 }}
               >
@@ -168,16 +205,17 @@ export default function AddWin() {
                 {mood}
               </motion.div>
               
-              {/* Milestone Message */}
-              {milestone && (
+              {/* New Badge Alert */}
+              {newBadge && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                  className="bg-gradient-to-r from-celebration/20 to-mint/20 rounded-2xl px-6 py-3 mb-4"
+                  transition={{ delay: 0.3 }}
+                  className="bg-gradient-to-r from-amber-100 to-yellow-100 rounded-2xl px-6 py-3 mb-4 flex items-center gap-2"
                 >
-                  <p className="text-lg font-display font-bold text-foreground">
-                    {milestone.emoji} {milestone.message}
+                  <Award className="h-5 w-5 text-amber-600" />
+                  <p className="text-sm font-display font-bold text-amber-800">
+                    New Badge: {newBadge.emoji} {newBadge.name}!
                   </p>
                 </motion.div>
               )}
