@@ -117,23 +117,29 @@
   .glass-jar {
     background: linear-gradient(
       135deg,
-      hsl(var(--jar-glass) / 0.9) 0%,
-      hsl(var(--jar-glass) / 0.6) 50%,
-      hsl(var(--jar-glass) / 0.9) 100%
+      hsl(var(--jar-glass) / 0.95) 0%,
+      hsl(var(--jar-glass) / 0.7) 50%,
+      hsl(var(--jar-glass) / 0.95) 100%
     );
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(12px);
   }
 
   .card-cozy {
-    @apply bg-card rounded-2xl shadow-soft border border-border/50;
+    @apply bg-card rounded-2xl shadow-soft border border-border/50 transition-all duration-300;
+  }
+
+  .card-cozy:hover {
+    @apply shadow-lifted;
   }
 
   .shadow-soft {
-    box-shadow: var(--shadow-soft);
+    box-shadow: 0 4px 20px -4px hsl(25 30% 20% / 0.1), 
+                0 2px 8px -2px hsl(25 30% 20% / 0.06);
   }
 
   .shadow-lifted {
-    box-shadow: var(--shadow-lifted);
+    box-shadow: 0 12px 40px -8px hsl(25 30% 20% / 0.15), 
+                0 4px 16px -4px hsl(25 30% 20% / 0.1);
   }
 
   .gradient-warm {
@@ -151,5 +157,55 @@
       hsl(var(--mint)) 50%,
       hsl(var(--sky)) 100%
     );
+  }
+
+  .btn-bounce {
+    @apply transition-transform duration-200;
+  }
+
+  .btn-bounce:hover {
+    @apply scale-105;
+  }
+
+  .btn-bounce:active {
+    @apply scale-95;
+  }
+
+  /* Smooth page transitions */
+  .page-enter {
+    animation: pageEnter 0.4s ease-out;
+  }
+
+  @keyframes pageEnter {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Bounce animation for success states */
+  .bounce-in {
+    animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  @keyframes bounceIn {
+    0% {
+      opacity: 0;
+      transform: scale(0.3);
+    }
+    50% {
+      transform: scale(1.15);
+    }
+    70% {
+      transform: scale(0.9);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 }
