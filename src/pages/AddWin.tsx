@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
@@ -6,9 +6,10 @@ import { MoodSelector } from "@/components/MoodSelector";
 import { Confetti } from "@/components/Confetti";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { saveWin } from "@/lib/storage";
+import { saveWin, getWins } from "@/lib/storage";
 import { getRandomAffirmation } from "@/lib/affirmations";
-import { Send, ArrowLeft } from "lucide-react";
+import { getMilestoneMessage, getMoodTheme } from "@/lib/milestones";
+import { Send, ArrowLeft, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function AddWin() {
@@ -18,6 +19,9 @@ export default function AddWin() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [affirmation, setAffirmation] = useState("");
+  const [milestone, setMilestone] = useState<{ message: string; emoji: string } | null>(null);
+
+  const theme = getMoodTheme(mood);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,28 +29,36 @@ export default function AddWin() {
 
     setIsSubmitting(true);
     saveWin({ text: text.trim(), mood });
+    
+    const winCount = getWins().length;
+    const milestoneMsg = getMilestoneMessage(winCount);
+    
+    if (milestoneMsg) {
+      setMilestone(milestoneMsg);
+    }
+    
     setAffirmation(getRandomAffirmation());
     setShowConfetti(true);
 
     // Wait for celebration, then redirect
     setTimeout(() => {
       navigate("/jar");
-    }, 2500);
+    }, 3000);
   };
 
   const isValid = text.trim().length > 0;
 
   return (
     <Layout>
-      <Confetti trigger={showConfetti} />
+      <Confetti trigger={showConfetti} intensity="high" />
       
-      <div className="pt-2">
+      <div className="pt-2 page-enter">
         {/* Back Link */}
         <Link 
           to="/" 
-          className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors mb-6"
+          className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors mb-6 group"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
           <span className="text-sm">Back</span>
         </Link>
 
@@ -55,9 +67,13 @@ export default function AddWin() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-6"
         >
-          <h1 className="text-2xl font-display font-bold text-foreground mb-2">
-            Add a Tiny Win 🎉
-          </h1>
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <Sparkles className="h-5 w-5 text-primary" />
+            <h1 className="text-2xl font-display font-bold text-foreground">
+              Add a Tiny Win
+            </h1>
+            <Sparkles className="h-5 w-5 text-primary" />
+          </div>
           <p className="text-muted-foreground text-sm">
             What's something good that happened today?
           </p>
@@ -70,11 +86,15 @@ export default function AddWin() {
               onSubmit={handleSubmit}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+              exit={{ opacity: 0, scale: 0.95, y: -20 }}
               className="space-y-6"
             >
               {/* Text Input */}
-              <div className="card-cozy p-4">
+              <motion.div 
+                className={`card-cozy p-4 bg-gradient-to-br ${theme.bg}`}
+                whileHover={{ scale: 1.01 }}
+                transition={{ duration: 0.2 }}
+              >
                 <label className="block text-sm font-medium text-foreground mb-2">
                   Your tiny win
                 </label>
@@ -82,21 +102,26 @@ export default function AddWin() {
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                   placeholder="I made my bed, had a nice coffee, took a short walk..."
-                  className="min-h-[120px] resize-none bg-background border-border/50 rounded-xl text-base"
+                  className="min-h-[120px] resize-none bg-background/80 border-border/50 rounded-xl text-base focus:ring-2 focus:ring-primary/30 transition-all"
                   maxLength={280}
                 />
                 <p className="text-xs text-muted-foreground text-right mt-2">
                   {text.length}/280
                 </p>
-              </div>
+              </motion.div>
 
               {/* Mood Selector */}
-              <div className="card-cozy p-4">
+              <motion.div 
+                className="card-cozy p-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+              >
                 <label className="block text-sm font-medium text-foreground mb-3 text-center">
                   How does this win make you feel?
                 </label>
                 <MoodSelector selected={mood} onSelect={setMood} />
-              </div>
+              </motion.div>
 
               {/* Submit Button */}
               <motion.div
@@ -107,7 +132,7 @@ export default function AddWin() {
                 <Button
                   type="submit"
                   disabled={!isValid}
-                  className="w-full rounded-full py-6 text-lg gap-2 shadow-lifted"
+                  className="w-full rounded-full py-6 text-lg gap-2 shadow-lifted btn-bounce"
                 >
                   <Send className="h-5 w-5" />
                   Save My Win
@@ -117,25 +142,64 @@ export default function AddWin() {
           ) : (
             <motion.div
               key="success"
-              initial={{ opacity: 0, scale: 0.8 }}
+              initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 1, scale: 1 }}
+              transition={{ 
+                type: "spring", 
+                stiffness: 300, 
+                damping: 20 
+              }}
               className="flex flex-col items-center justify-center py-12"
             >
+              {/* Bouncing Mood Emoji */}
               <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring", stiffness: 300, damping: 15 }}
-                className="text-6xl mb-6"
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ 
+                  scale: [0, 1.3, 0.9, 1.1, 1],
+                  rotate: [-180, 20, -10, 5, 0]
+                }}
+                transition={{ 
+                  duration: 0.8,
+                  times: [0, 0.4, 0.6, 0.8, 1],
+                  ease: "easeOut"
+                }}
+                className="text-7xl mb-6 drop-shadow-lg"
               >
                 {mood}
               </motion.div>
+              
+              {/* Milestone Message */}
+              {milestone && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="bg-gradient-to-r from-celebration/20 to-mint/20 rounded-2xl px-6 py-3 mb-4"
+                >
+                  <p className="text-lg font-display font-bold text-foreground">
+                    {milestone.emoji} {milestone.message}
+                  </p>
+                </motion.div>
+              )}
+              
+              {/* Affirmation */}
               <motion.p
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="text-lg text-center text-foreground font-medium max-w-xs"
+                transition={{ delay: 0.5 }}
+                className="text-lg text-center text-foreground font-medium max-w-xs leading-relaxed"
               >
                 {affirmation}
+              </motion.p>
+              
+              {/* Redirecting indicator */}
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.5 }}
+                className="text-sm text-muted-foreground mt-6"
+              >
+                Taking you to your jar... ✨
               </motion.p>
             </motion.div>
           )}
