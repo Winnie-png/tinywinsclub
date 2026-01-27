@@ -1,15 +1,16 @@
 import { motion } from "framer-motion";
 import type { Win } from "@/lib/storage";
-import { Trash2 } from "lucide-react";
+import { Trash2, Share2 } from "lucide-react";
 import { getMoodTheme } from "@/lib/milestones";
 
 interface WinCardProps {
   win: Win;
   index: number;
   onDelete?: (id: string) => void;
+  onShare?: (win: Win) => void;
 }
 
-export function WinCard({ win, index, onDelete }: WinCardProps) {
+export function WinCard({ win, index, onDelete, onShare }: WinCardProps) {
   const formattedDate = new Date(win.createdAt).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
@@ -60,18 +61,31 @@ export function WinCard({ win, index, onDelete }: WinCardProps) {
           </p>
         </div>
         
-        {/* Delete Button */}
-        {onDelete && (
-          <motion.button
-            onClick={() => onDelete(win.id)}
-            className="opacity-0 group-hover:opacity-100 p-2 rounded-xl bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all duration-200"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            aria-label="Delete win"
-          >
-            <Trash2 className="h-4 w-4" />
-          </motion.button>
-        )}
+        {/* Action Buttons */}
+        <div className="flex gap-1">
+          {onShare && (
+            <motion.button
+              onClick={() => onShare(win)}
+              className="opacity-0 group-hover:opacity-100 p-2 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-all duration-200"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              aria-label="Share win"
+            >
+              <Share2 className="h-4 w-4" />
+            </motion.button>
+          )}
+          {onDelete && (
+            <motion.button
+              onClick={() => onDelete(win.id)}
+              className="opacity-0 group-hover:opacity-100 p-2 rounded-xl bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all duration-200"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              aria-label="Delete win"
+            >
+              <Trash2 className="h-4 w-4" />
+            </motion.button>
+          )}
+        </div>
       </div>
       
       {/* Decorative corner accent */}
