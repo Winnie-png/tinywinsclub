@@ -11,6 +11,7 @@ import MyJar from "./pages/MyJar";
 import Stats from "./pages/Stats";
 import Badges from "./pages/Badges";
 import About from "./pages/About";
+import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/stats" element={<Stats />} />
             <Route path="/badges" element={<Badges />} />
             <Route path="/about" element={<About />} />
+            <Route path="/pricing" element={<Pricing />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
