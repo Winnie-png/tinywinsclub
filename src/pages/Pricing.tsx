@@ -102,9 +102,16 @@ export default function Pricing() {
               <Button 
                 size="lg" 
                 className="w-full h-14 text-lg font-display font-semibold rounded-2xl bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 btn-bounce"
+                asChild
               >
-                <Sparkles className="h-5 w-5 mr-2" />
-                Start My Membership
+                <a 
+                  href="https://paystack.shop/pay/tinywins-pro" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  <Sparkles className="h-5 w-5 mr-2" />
+                  Start My Membership
+                </a>
               </Button>
             </motion.div>
           </div>
