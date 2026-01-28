@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Check, Sparkles, TrendingUp, Lightbulb, Heart } from "lucide-react";
-
+import { useAuth } from "@/contexts/AuthContext";
 const benefits = [
   {
     icon: Sparkles,
@@ -22,6 +23,19 @@ const benefits = [
 ];
 
 export default function Pricing() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubscribeClick = () => {
+    if (!user) {
+      // Redirect to auth with return URL
+      navigate("/auth?redirect=/pricing");
+      return;
+    }
+    // User is logged in, open Paystack link
+    window.open("https://paystack.shop/pay/tinywins-pro", "_blank", "noopener,noreferrer");
+  };
+
   return (
     <Layout>
       <div className="pt-4">
@@ -102,16 +116,10 @@ export default function Pricing() {
               <Button 
                 size="lg" 
                 className="w-full h-14 text-lg font-display font-semibold rounded-2xl bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 btn-bounce"
-                asChild
+                onClick={handleSubscribeClick}
               >
-                <a 
-                  href="https://paystack.shop/pay/tinywins-pro" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                >
-                  <Sparkles className="h-5 w-5 mr-2" />
-                  Start My Membership
-                </a>
+                <Sparkles className="h-5 w-5 mr-2" />
+                Start My Membership
               </Button>
             </motion.div>
           </div>
