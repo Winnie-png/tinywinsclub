@@ -74,9 +74,9 @@ export default function Pricing() {
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-accent/10 to-transparent rounded-full translate-y-1/2 -translate-x-1/2" />
           
           <div className="relative">
-            <div className="flex items-baseline justify-center gap-1 mb-6">
-              <span className="text-4xl font-display font-bold text-foreground">Free</span>
-              <span className="text-muted-foreground">forever</span>
+            <div className="flex flex-col items-center gap-1 mb-6">
+              <span className="text-3xl font-display font-bold text-foreground">Only 400 KES</span>
+              <span className="text-muted-foreground">(~$3.00 USD) / month</span>
             </div>
 
             {/* Benefits List */}
@@ -119,7 +119,12 @@ export default function Pricing() {
                 onClick={handleSubscribeClick}
               >
                 <Sparkles className="h-5 w-5 mr-2" />
-                Start My Membership
+                Unlock Pro
+                <img 
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/512px-M-PESA_LOGO-01.svg.png" 
+                  alt="M-Pesa" 
+                  className="h-5 ml-2"
+                />
               </Button>
             </motion.div>
           </div>
@@ -132,7 +137,7 @@ export default function Pricing() {
           transition={{ delay: 0.7 }}
           className="text-center text-sm text-muted-foreground"
         >
-          ✨ No credit card required • 100% free • Made with love
+          💳 Pay easily with M-Pesa or any major Credit Card globally
         </motion.p>
       </div>
     </Layout>
