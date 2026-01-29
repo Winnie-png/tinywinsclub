@@ -104,6 +104,18 @@ const Index = () => {
           )}
         </motion.div>
 
+        {/* Free tier win count indicator */}
+        {!isPro && wins.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.55 }}
+            className="mt-4 text-sm text-muted-foreground"
+          >
+            {wins.length}/10 free wins used
+          </motion.div>
+        )}
+
         {/* Milestone Teaser */}
         {nextMilestone && wins.length > 0 && (
           <motion.div

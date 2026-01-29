@@ -5,6 +5,7 @@ import { Layout } from "@/components/Layout";
 import { MoodSelector } from "@/components/MoodSelector";
 import { Confetti } from "@/components/Confetti";
 import { MilestoneModal } from "@/components/MilestoneModal";
+import { PaywallModal } from "@/components/PaywallModal";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { saveWin, getWins } from "@/lib/storage";
@@ -14,10 +15,14 @@ import { getRecentlyEarnedBadge, Badge } from "@/lib/badges";
 import { Send, ArrowLeft, Sparkles, Award } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useAuth } from "@/contexts/AuthContext";
+
+const FREE_WIN_LIMIT = 10;
 
 export default function AddWin() {
   const navigate = useNavigate();
   const { setMood: setThemeMood, theme } = useTheme();
+  const { isPro } = useAuth();
   const [text, setText] = useState("");
   const [mood, setMood] = useState("😊");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -26,8 +31,11 @@ export default function AddWin() {
   const [milestone, setMilestone] = useState<Milestone | null>(null);
   const [showMilestoneModal, setShowMilestoneModal] = useState(false);
   const [newBadge, setNewBadge] = useState<Badge | null>(null);
+  const [showPaywall, setShowPaywall] = useState(false);
 
   const moodTheme = getMoodTheme(mood);
+  const currentWinCount = getWins().length;
+  const hasReachedLimit = !isPro && currentWinCount >= FREE_WIN_LIMIT;
 
   // Update global theme when mood changes
   useEffect(() => {
@@ -37,6 +45,12 @@ export default function AddWin() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!text.trim()) return;
+
+    // Check win limit for free users
+    if (hasReachedLimit) {
+      setShowPaywall(true);
+      return;
+    }
 
     setIsSubmitting(true);
     const previousCount = getWins().length;
@@ -87,6 +101,12 @@ export default function AddWin() {
         milestone={milestone} 
         isOpen={showMilestoneModal} 
         onClose={handleMilestoneClose} 
+      />
+      <PaywallModal
+        isOpen={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        title="Your jar is full!"
+        message="You've reached the free limit of 10 wins. Upgrade to Pro to keep collecting your victories."
       />
       
       <div className={`pt-2 page-enter min-h-screen bg-gradient-to-br ${theme.bg} transition-colors duration-500`}>

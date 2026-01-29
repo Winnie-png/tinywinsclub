@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { Check, Sparkles, TrendingUp, Lightbulb, Heart } from "lucide-react";
+import { Check, Sparkles, TrendingUp, Lightbulb, Crown } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 const benefits = [
   {
@@ -49,13 +49,13 @@ export default function Pricing() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 200, delay: 0.1 }}
-            className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 mb-6"
+            className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-500/20 mb-6"
           >
-            <Heart className="h-10 w-10 text-primary" />
+            <Crown className="h-10 w-10 text-amber-500" />
           </motion.div>
           
           <h1 className="text-3xl font-display font-bold text-foreground mb-3">
-            Join the Club
+            Upgrade to Tiny Wins Pro
           </h1>
           <p className="text-muted-foreground max-w-xs mx-auto leading-relaxed">
             Unlock the full power of celebrating your daily victories
