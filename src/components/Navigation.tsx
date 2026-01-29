@@ -1,13 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Home, PlusCircle, Cookie, TrendingUp, Trophy } from "lucide-react";
+import { Home, PlusCircle, Cookie, TrendingUp, User } from "lucide-react";
 
 const navItems = [
   { path: "/", icon: Home, label: "Home" },
   { path: "/add", icon: PlusCircle, label: "Add" },
   { path: "/jar", icon: Cookie, label: "My Jar" },
   { path: "/stats", icon: TrendingUp, label: "Stats" },
-  { path: "/badges", icon: Trophy, label: "Badges" },
+  { path: "/profile", icon: User, label: "Profile" },
 ];
 
 export function Navigation() {
