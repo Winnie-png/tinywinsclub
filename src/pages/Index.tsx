@@ -6,14 +6,16 @@ import { BadgeDisplay } from "@/components/BadgeDisplay";
 import { Button } from "@/components/ui/button";
 import { getWins } from "@/lib/storage";
 import { getNextMilestone } from "@/lib/milestones";
-import { PlusCircle, Sparkles, Heart, TrendingUp, Trophy } from "lucide-react";
+import { PlusCircle, Sparkles, Heart, TrendingUp, Crown } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { Win } from "@/lib/storage";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
   const [wins, setWins] = useState<Win[]>([]);
   const { theme } = useTheme();
+  const { isPro } = useAuth();
 
   useEffect(() => {
     setWins(getWins());
@@ -88,12 +90,18 @@ const Index = () => {
               Stats
             </Link>
           </Button>
-          <Button variant="outline" size="sm" asChild className="rounded-full gap-1">
-            <Link to="/badges">
-              <Trophy className="h-4 w-4" />
-              Badges
-            </Link>
-          </Button>
+          {!isPro && (
+            <Button 
+              size="sm" 
+              asChild 
+              className="rounded-full gap-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white border-0"
+            >
+              <Link to="/pricing">
+                <Crown className="h-4 w-4" />
+                Unlock Pro
+              </Link>
+            </Button>
+          )}
         </motion.div>
 
         {/* Milestone Teaser */}

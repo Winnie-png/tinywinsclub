@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import Index from "./pages/Index";
 import AddWin from "./pages/AddWin";
@@ -14,6 +15,7 @@ import Badges from "./pages/Badges";
 import About from "./pages/About";
 import Pricing from "./pages/Pricing";
 import Auth from "./pages/Auth";
+import Profile from "./pages/Profile";
 import WelcomePro from "./pages/WelcomePro";
 import NotFound from "./pages/NotFound";
 
@@ -29,15 +31,20 @@ const App = () => (
           <InstallPrompt />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/add" element={<AddWin />} />
-              <Route path="/jar" element={<MyJar />} />
-              <Route path="/stats" element={<Stats />} />
-              <Route path="/badges" element={<Badges />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/pricing" element={<Pricing />} />
+              {/* Public routes */}
               <Route path="/auth" element={<Auth />} />
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/about" element={<About />} />
               <Route path="/welcome-pro" element={<WelcomePro />} />
+              
+              {/* Protected routes */}
+              <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+              <Route path="/add" element={<ProtectedRoute><AddWin /></ProtectedRoute>} />
+              <Route path="/jar" element={<ProtectedRoute><MyJar /></ProtectedRoute>} />
+              <Route path="/stats" element={<ProtectedRoute><Stats /></ProtectedRoute>} />
+              <Route path="/badges" element={<ProtectedRoute><Badges /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
