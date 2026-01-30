@@ -8,11 +8,11 @@ import { MilestoneModal } from "@/components/MilestoneModal";
 import { PaywallModal } from "@/components/PaywallModal";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { saveWin, getWins } from "@/lib/storage";
+import { useWins } from "@/hooks/useWins";
 import { getRandomAffirmation } from "@/lib/affirmations";
 import { getMilestoneMessage, getMoodTheme, Milestone } from "@/lib/milestones";
 import { getRecentlyEarnedBadge, Badge } from "@/lib/badges";
-import { Send, ArrowLeft, Sparkles, Award } from "lucide-react";
+import { Send, ArrowLeft, Sparkles, Award, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -23,6 +23,7 @@ export default function AddWin() {
   const navigate = useNavigate();
   const { setMood: setThemeMood, theme } = useTheme();
   const { isPro } = useAuth();
+  const { wins, saveWin, loading: winsLoading } = useWins();
   const [text, setText] = useState("");
   const [mood, setMood] = useState("😊");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,7 +35,7 @@ export default function AddWin() {
   const [showPaywall, setShowPaywall] = useState(false);
 
   const moodTheme = getMoodTheme(mood);
-  const currentWinCount = getWins().length;
+  const currentWinCount = wins.length;
   const hasReachedLimit = !isPro && currentWinCount >= FREE_WIN_LIMIT;
 
   // Update global theme when mood changes
@@ -53,15 +54,23 @@ export default function AddWin() {
     }
 
     setIsSubmitting(true);
-    const previousCount = getWins().length;
-    saveWin({ text: text.trim(), mood });
+    const previousCount = wins.length;
     
-    const wins = getWins();
-    const winCount = wins.length;
-    const milestoneMsg = getMilestoneMessage(winCount);
+    // Wait for database confirmation before proceeding
+    const savedWin = await saveWin({ text: text.trim(), mood });
     
-    // Check for new badges
-    const earnedBadge = getRecentlyEarnedBadge(wins, previousCount);
+    if (!savedWin) {
+      // Save failed - error toast already shown by hook
+      setIsSubmitting(false);
+      return;
+    }
+    
+    const newWinCount = previousCount + 1;
+    const milestoneMsg = getMilestoneMessage(newWinCount);
+    
+    // Check for new badges with updated wins array
+    const updatedWins = [savedWin, ...wins];
+    const earnedBadge = getRecentlyEarnedBadge(updatedWins, previousCount);
     if (earnedBadge) {
       setNewBadge(earnedBadge);
     }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Layout } from "@/components/Layout";
 import { WinJar } from "@/components/WinJar";
@@ -6,27 +6,21 @@ import { WinCard } from "@/components/WinCard";
 import { WeeklyStats } from "@/components/WeeklyStats";
 import { BadgeDisplay } from "@/components/BadgeDisplay";
 import { ShareableWin } from "@/components/ShareableWin";
-import { getWins, deleteWin } from "@/lib/storage";
+import { useWins, Win } from "@/hooks/useWins";
 import { getNextMilestone } from "@/lib/milestones";
-import type { Win } from "@/lib/storage";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Trophy, Target, Share2 } from "lucide-react";
+import { PlusCircle, Trophy, Target, Loader2 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 
 export default function MyJar() {
-  const [wins, setWins] = useState<Win[]>([]);
+  const { wins, loading, deleteWin } = useWins();
   const [selectedWin, setSelectedWin] = useState<Win | null>(null);
   const [showShare, setShowShare] = useState(false);
   const { theme } = useTheme();
 
-  useEffect(() => {
-    setWins(getWins());
-  }, []);
-
-  const handleDelete = (id: string) => {
-    deleteWin(id);
-    setWins(getWins());
+  const handleDelete = async (id: string) => {
+    await deleteWin(id);
   };
 
   const handleShare = (win: Win) => {
@@ -35,6 +29,16 @@ export default function MyJar() {
   };
 
   const nextMilestone = getNextMilestone(wins.length);
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>

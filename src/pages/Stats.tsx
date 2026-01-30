@@ -1,21 +1,15 @@
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
 import { WeeklyStats } from "@/components/WeeklyStats";
-import { getWins } from "@/lib/storage";
+import { useWins } from "@/hooks/useWins";
 import { getMoodDistribution } from "@/lib/analytics";
 import { calculateStreak } from "@/lib/badges";
-import type { Win } from "@/lib/storage";
-import { TrendingUp, Flame, Award, Calendar } from "lucide-react";
+import { TrendingUp, Flame, Award, Calendar, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 export default function Stats() {
-  const [wins, setWins] = useState<Win[]>([]);
-
-  useEffect(() => {
-    setWins(getWins());
-  }, []);
+  const { wins, loading } = useWins();
 
   const moodDist = getMoodDistribution(wins);
   const streak = calculateStreak(wins);
@@ -25,6 +19,16 @@ export default function Stats() {
     { label: "Current Streak", value: `${streak} days`, icon: Flame, color: "from-peach to-peach/50" },
     { label: "Unique Moods", value: moodDist.length, icon: TrendingUp, color: "from-mint to-mint/50" },
   ];
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>

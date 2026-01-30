@@ -4,24 +4,28 @@ import { Layout } from "@/components/Layout";
 import { WinJar } from "@/components/WinJar";
 import { BadgeDisplay } from "@/components/BadgeDisplay";
 import { Button } from "@/components/ui/button";
-import { getWins } from "@/lib/storage";
+import { useWins } from "@/hooks/useWins";
 import { getNextMilestone } from "@/lib/milestones";
-import { PlusCircle, Sparkles, Heart, TrendingUp, Crown } from "lucide-react";
-import { useEffect, useState } from "react";
-import type { Win } from "@/lib/storage";
+import { PlusCircle, Sparkles, Heart, TrendingUp, Crown, Loader2 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
-  const [wins, setWins] = useState<Win[]>([]);
+  const { wins, loading } = useWins();
   const { theme } = useTheme();
   const { isPro } = useAuth();
 
-  useEffect(() => {
-    setWins(getWins());
-  }, []);
-
   const nextMilestone = getNextMilestone(wins.length);
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
