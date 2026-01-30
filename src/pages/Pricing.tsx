@@ -2,8 +2,9 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { Check, Sparkles, TrendingUp, Lightbulb, Crown } from "lucide-react";
+import { Check, Sparkles, TrendingUp, Lightbulb, Crown, CreditCard } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+
 const benefits = [
   {
     icon: Sparkles,
@@ -26,13 +27,19 @@ export default function Pricing() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubscribeClick = () => {
+  const handleOneTimeClick = () => {
     if (!user) {
-      // Redirect to auth with return URL
       navigate("/auth?redirect=/pricing");
       return;
     }
-    // User is logged in, open Paystack link
+    window.open("https://paystack.shop/pay/tinywins-pro-access", "_blank", "noopener,noreferrer");
+  };
+
+  const handleSubscriptionClick = () => {
+    if (!user) {
+      navigate("/auth?redirect=/pricing");
+      return;
+    }
     window.open("https://paystack.shop/pay/tinywins-pro", "_blank", "noopener,noreferrer");
   };
 
@@ -43,7 +50,7 @@ export default function Pricing() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-10"
+          className="text-center mb-8"
         >
           <motion.div
             initial={{ scale: 0 }}
@@ -54,11 +61,11 @@ export default function Pricing() {
             <Crown className="h-10 w-10 text-amber-500" />
           </motion.div>
           
-          <h1 className="text-3xl font-display font-bold text-foreground mb-3">
+          <h1 className="text-3xl font-display font-bold text-foreground mb-2">
             Upgrade to Tiny Wins Pro
           </h1>
-          <p className="text-muted-foreground max-w-xs mx-auto leading-relaxed">
-            Unlock the full power of celebrating your daily victories
+          <p className="text-lg text-muted-foreground font-medium">
+            Choose Your Plan
           </p>
         </motion.div>
 
@@ -70,8 +77,8 @@ export default function Pricing() {
           className="card-cozy p-6 mb-6 relative overflow-hidden"
         >
           {/* Decorative gradient */}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-primary/10 to-transparent rounded-full -translate-y-1/2 translate-x-1/2" />
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-accent/10 to-transparent rounded-full translate-y-1/2 -translate-x-1/2" />
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-full -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-orange-500/10 to-transparent rounded-full translate-y-1/2 -translate-x-1/2" />
           
           <div className="relative">
             <div className="flex flex-col items-center gap-1 mb-6">
@@ -107,25 +114,48 @@ export default function Pricing() {
               ))}
             </div>
 
-            {/* CTA Button */}
+            {/* Payment Buttons */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.6, type: "spring", stiffness: 200 }}
+              className="space-y-4"
             >
-              <Button 
-                size="lg" 
-                className="w-full h-14 text-lg font-display font-semibold rounded-2xl bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 btn-bounce"
-                onClick={handleSubscribeClick}
-              >
-                <Sparkles className="h-5 w-5 mr-2" />
-                Unlock Pro
-                <img 
-                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/512px-M-PESA_LOGO-01.svg.png" 
-                  alt="M-Pesa" 
-                  className="h-5 ml-2"
-                />
-              </Button>
+              {/* Primary Button - One-time */}
+              <div className="space-y-2">
+                <Button 
+                  size="lg" 
+                  className="w-full h-14 text-lg font-display font-semibold rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 btn-bounce"
+                  onClick={handleOneTimeClick}
+                >
+                  <Crown className="h-5 w-5 mr-2" />
+                  Get 30 Days Pro
+                  <img 
+                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/512px-M-PESA_LOGO-01.svg.png" 
+                    alt="M-Pesa" 
+                    className="h-5 ml-2"
+                  />
+                </Button>
+                <p className="text-center text-xs text-muted-foreground">
+                  Best for M-Pesa, Apple Pay, & Cards
+                </p>
+              </div>
+
+              {/* Secondary Button - Subscription */}
+              <div className="space-y-2">
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  className="w-full h-12 text-base font-display font-semibold rounded-2xl border-2 hover:bg-muted/50 transition-all duration-300"
+                  onClick={handleSubscriptionClick}
+                >
+                  <CreditCard className="h-5 w-5 mr-2" />
+                  Monthly Subscription
+                </Button>
+                <p className="text-center text-xs text-muted-foreground">
+                  Automatic monthly billing. Card only.
+                </p>
+              </div>
             </motion.div>
           </div>
         </motion.div>
