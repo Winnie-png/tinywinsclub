@@ -7,17 +7,28 @@ import { WeeklyStats } from "@/components/WeeklyStats";
 import { BadgeDisplay } from "@/components/BadgeDisplay";
 import { ShareableWin } from "@/components/ShareableWin";
 import { useWins, Win } from "@/hooks/useWins";
+import { useJars } from "@/hooks/useJars";
 import { getNextMilestone } from "@/lib/milestones";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Trophy, Target, Loader2 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function MyJar() {
-  const { wins, loading, deleteWin } = useWins();
+  const { jars, loading: jarsLoading, activeJarId, setActiveJarId } = useJars();
+  const { wins, loading: winsLoading, deleteWin } = useWins(activeJarId);
   const [selectedWin, setSelectedWin] = useState<Win | null>(null);
   const [showShare, setShowShare] = useState(false);
   const { theme } = useTheme();
+
+  const loading = jarsLoading || winsLoading;
 
   const handleDelete = async (id: string) => {
     await deleteWin(id);
@@ -51,11 +62,30 @@ export default function MyJar() {
           <div className="flex items-center justify-center gap-2 mb-2">
             <Trophy className="h-5 w-5 text-celebration" />
             <h1 className="text-2xl font-display font-bold text-foreground">
-              My Win Jar
+              {jars.find(j => j.id === activeJarId)?.name || "My Win Jar"}
             </h1>
             <Trophy className="h-5 w-5 text-celebration" />
           </div>
-          <p className="text-muted-foreground text-sm">
+          
+          {/* Jar Selector - only show if multiple jars */}
+          {jars.length > 1 && (
+            <div className="mt-3">
+              <Select value={activeJarId || ""} onValueChange={setActiveJarId}>
+                <SelectTrigger className="w-48 mx-auto rounded-full">
+                  <SelectValue placeholder="Select a jar" />
+                </SelectTrigger>
+                <SelectContent>
+                  {jars.map((jar) => (
+                    <SelectItem key={jar.id} value={jar.id}>
+                      {jar.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+          
+          <p className="text-muted-foreground text-sm mt-2">
             All your tiny victories, safe and sound
           </p>
         </motion.div>

@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      jars: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -42,6 +63,7 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          jar_id: string | null
           mood: string
           text: string
           user_id: string
@@ -49,6 +71,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          jar_id?: string | null
           mood?: string
           text: string
           user_id: string
@@ -56,11 +79,20 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          jar_id?: string | null
           mood?: string
           text?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "wins_jar_id_fkey"
+            columns: ["jar_id"]
+            isOneToOne: false
+            referencedRelation: "jars"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
