@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import type { Win } from "@/lib/storage";
+import type { Win } from "@/hooks/useWins";
 
 interface WinJarProps {
   wins: Win[];

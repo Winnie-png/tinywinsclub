@@ -9,6 +9,7 @@ import { PaywallModal } from "@/components/PaywallModal";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useWins } from "@/hooks/useWins";
+import { useJars } from "@/hooks/useJars";
 import { getRandomAffirmation } from "@/lib/affirmations";
 import { getMilestoneMessage, getMoodTheme, Milestone } from "@/lib/milestones";
 import { getRecentlyEarnedBadge, Badge } from "@/lib/badges";
@@ -23,6 +24,7 @@ export default function AddWin() {
   const navigate = useNavigate();
   const { setMood: setThemeMood, theme } = useTheme();
   const { isPro } = useAuth();
+  const { jars, activeJarId, ensureDefaultJar, loading: jarsLoading } = useJars();
   const { wins, saveWin, loading: winsLoading } = useWins();
   const [text, setText] = useState("");
   const [mood, setMood] = useState("😊");
@@ -56,8 +58,11 @@ export default function AddWin() {
     setIsSubmitting(true);
     const previousCount = wins.length;
     
+    // Ensure user has a jar to add wins to
+    const jarId = await ensureDefaultJar();
+    
     // Wait for database confirmation before proceeding
-    const savedWin = await saveWin({ text: text.trim(), mood });
+    const savedWin = await saveWin({ text: text.trim(), mood, jarId });
     
     if (!savedWin) {
       // Save failed - error toast already shown by hook
