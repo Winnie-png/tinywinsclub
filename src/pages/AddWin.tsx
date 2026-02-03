@@ -17,6 +17,13 @@ import { Send, ArrowLeft, Sparkles, Award, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const FREE_WIN_LIMIT = 10;
 
@@ -24,10 +31,11 @@ export default function AddWin() {
   const navigate = useNavigate();
   const { setMood: setThemeMood, theme } = useTheme();
   const { isPro } = useAuth();
-  const { jars, activeJarId, ensureDefaultJar, loading: jarsLoading } = useJars();
+  const { jars, activeJarId, setActiveJarId, ensureDefaultJar, loading: jarsLoading } = useJars();
   const { wins, saveWin, loading: winsLoading } = useWins();
   const [text, setText] = useState("");
   const [mood, setMood] = useState("😊");
+  const [selectedJarId, setSelectedJarId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [affirmation, setAffirmation] = useState("");
@@ -39,6 +47,13 @@ export default function AddWin() {
   const moodTheme = getMoodTheme(mood);
   const currentWinCount = wins.length;
   const hasReachedLimit = !isPro && currentWinCount >= FREE_WIN_LIMIT;
+
+  // Set default selected jar when jars load
+  useEffect(() => {
+    if (jars.length > 0 && !selectedJarId) {
+      setSelectedJarId(activeJarId || jars[0].id);
+    }
+  }, [jars, activeJarId, selectedJarId]);
 
   // Update global theme when mood changes
   useEffect(() => {
@@ -59,7 +74,10 @@ export default function AddWin() {
     const previousCount = wins.length;
     
     // Ensure user has a jar to add wins to
-    const jarId = await ensureDefaultJar();
+    let jarId = selectedJarId;
+    if (!jarId) {
+      jarId = await ensureDefaultJar();
+    }
     
     // Wait for database confirmation before proceeding
     const savedWin = await saveWin({ text: text.trim(), mood, jarId });
@@ -193,6 +211,35 @@ export default function AddWin() {
                 </label>
                 <MoodSelector selected={mood} onSelect={setMood} />
               </motion.div>
+
+              {/* Jar Selector - Only show if multiple jars */}
+              {jars.length > 1 && (
+                <motion.div 
+                  className="card-cozy p-4"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.15 }}
+                >
+                  <label className="block text-sm font-medium text-foreground mb-3 text-center">
+                    Add to which jar?
+                  </label>
+                  <Select 
+                    value={selectedJarId || ""} 
+                    onValueChange={setSelectedJarId}
+                  >
+                    <SelectTrigger className="w-full rounded-xl">
+                      <SelectValue placeholder="Select a jar" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {jars.map((jar) => (
+                        <SelectItem key={jar.id} value={jar.id}>
+                          🫙 {jar.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </motion.div>
+              )}
 
               {/* Submit Button */}
               <motion.div
