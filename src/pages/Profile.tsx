@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { User, LogOut, Crown, Mail } from "lucide-react";
+import { User, LogOut, Crown, Mail, CreditCard } from "lucide-react";
 
 export default function Profile() {
   const { user, isPro, signOut } = useAuth();
@@ -12,6 +12,14 @@ export default function Profile() {
   const handleSignOut = async () => {
     await signOut();
     navigate("/auth");
+  };
+
+  const handleOneTimeClick = () => {
+    window.open("https://paystack.shop/pay/tinywins-pro-access", "_blank", "noopener,noreferrer");
+  };
+
+  const handleSubscriptionClick = () => {
+    window.open("https://paystack.shop/pay/tinywins-pro", "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -67,7 +75,7 @@ export default function Profile() {
             </div>
           </div>
 
-          {/* Upgrade to Pro */}
+          {/* Upgrade to Pro - Only show for non-Pro users */}
           {!isPro && (
             <motion.div
               initial={{ opacity: 0 }}
@@ -82,16 +90,37 @@ export default function Profile() {
                 </h3>
               </div>
               <p className="text-sm text-muted-foreground mb-4">
-                Get unlimited wins, insights, and more for just 400 KES/month
+                Get unlimited wins, jars, insights, and more for just 400 KES/month
               </p>
-              <Button 
-                asChild
-                className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
-              >
-                <a href="https://paystack.shop/pay/tinywins-pro" target="_blank" rel="noopener noreferrer">
-                  Unlock Pro
-                </a>
-              </Button>
+              
+              {/* Primary Button - One-time (Same as Pricing page) */}
+              <div className="space-y-3">
+                <Button 
+                  onClick={handleOneTimeClick}
+                  className="w-full h-12 text-base font-display font-semibold rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg"
+                >
+                  <Crown className="h-5 w-5 mr-2" />
+                  Get 30 Days Pro
+                  <img 
+                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/512px-M-PESA_LOGO-01.svg.png" 
+                    alt="M-Pesa" 
+                    className="h-5 ml-2"
+                  />
+                </Button>
+                <p className="text-center text-xs text-muted-foreground">
+                  M-Pesa, Apple Pay, & Cards
+                </p>
+                
+                {/* Secondary Button - Subscription */}
+                <Button 
+                  variant="outline"
+                  onClick={handleSubscriptionClick}
+                  className="w-full h-10 text-sm font-display font-semibold rounded-xl border-2 hover:bg-muted/50"
+                >
+                  <CreditCard className="h-4 w-4 mr-2" />
+                  Monthly Subscription
+                </Button>
+              </div>
             </motion.div>
           )}
 

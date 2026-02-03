@@ -10,6 +10,7 @@ import { InstallPrompt } from "@/components/InstallPrompt";
 import Index from "./pages/Index";
 import AddWin from "./pages/AddWin";
 import MyJar from "./pages/MyJar";
+import Jars from "./pages/Jars";
 import Stats from "./pages/Stats";
 import Badges from "./pages/Badges";
 import About from "./pages/About";
@@ -41,6 +42,7 @@ const App = () => (
               <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
               <Route path="/add" element={<ProtectedRoute><AddWin /></ProtectedRoute>} />
               <Route path="/jar" element={<ProtectedRoute><MyJar /></ProtectedRoute>} />
+              <Route path="/jars" element={<ProtectedRoute><Jars /></ProtectedRoute>} />
               <Route path="/stats" element={<ProtectedRoute><Stats /></ProtectedRoute>} />
               <Route path="/badges" element={<ProtectedRoute><Badges /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
