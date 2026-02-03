@@ -69,9 +69,9 @@ export default function MyJar() {
           
           {/* Jar Selector - only show if multiple jars */}
           {jars.length > 1 && (
-            <div className="mt-3">
+            <div className="mt-3 flex items-center justify-center gap-2">
               <Select value={activeJarId || ""} onValueChange={setActiveJarId}>
-                <SelectTrigger className="w-48 mx-auto rounded-full">
+                <SelectTrigger className="w-48 rounded-full">
                   <SelectValue placeholder="Select a jar" />
                 </SelectTrigger>
                 <SelectContent>
@@ -82,6 +82,11 @@ export default function MyJar() {
                   ))}
                 </SelectContent>
               </Select>
+              <Button variant="outline" size="icon" asChild className="rounded-full">
+                <Link to="/jars">
+                  <PlusCircle className="h-4 w-4" />
+                </Link>
+              </Button>
             </div>
           )}
           
