@@ -16,6 +16,8 @@ import Badges from "./pages/Badges";
 import About from "./pages/About";
 import Pricing from "./pages/Pricing";
 import Auth from "./pages/Auth";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import Profile from "./pages/Profile";
 import WelcomePro from "./pages/WelcomePro";
 import Onboarding from "./pages/Onboarding";
@@ -36,6 +38,8 @@ const App = () => (
               {/* Public routes */}
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/about" element={<About />} />
               <Route path="/welcome-pro" element={<WelcomePro />} />
