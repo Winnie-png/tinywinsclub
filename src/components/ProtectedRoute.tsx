@@ -18,6 +18,13 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   if (!user) {
+    // Check if user has completed onboarding
+    const hasCompletedOnboarding = localStorage.getItem("onboarding_completed") === "true";
+    
+    if (!hasCompletedOnboarding) {
+      return <Navigate to="/onboarding" replace />;
+    }
+    
     // Redirect to auth with current path as return URL
     return <Navigate to={`/auth?redirect=${encodeURIComponent(location.pathname)}`} replace />;
   }

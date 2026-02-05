@@ -18,6 +18,7 @@ import Pricing from "./pages/Pricing";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import WelcomePro from "./pages/WelcomePro";
+import Onboarding from "./pages/Onboarding";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               {/* Public routes */}
+              <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/about" element={<About />} />
