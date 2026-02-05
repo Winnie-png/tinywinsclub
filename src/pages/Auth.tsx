@@ -106,6 +106,16 @@ export default function Auth() {
                 minLength={6}
               />
             </div>
+            {isLogin && (
+              <div className="text-right">
+                <Link
+                  to="/forgot-password"
+                  className="text-xs text-muted-foreground hover:text-primary transition-colors"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+            )}
           </div>
 
           <Button
