@@ -58,8 +58,11 @@ export default function ForgotPassword() {
             <h1 className="text-2xl font-display font-bold text-foreground mb-3">
               Check your inbox
             </h1>
-            <p className="text-muted-foreground text-sm leading-relaxed max-w-xs mx-auto mb-8">
+            <p className="text-muted-foreground text-sm leading-relaxed max-w-xs mx-auto mb-4">
               We've sent a link to reset your password 🥰
+            </p>
+            <p className="text-muted-foreground/70 text-xs leading-relaxed max-w-xs mx-auto mb-8">
+              Didn't receive the email? Please check your spam or promotions folder, or try again.
             </p>
 
             <Link to="/auth">
