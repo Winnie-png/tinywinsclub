@@ -131,12 +131,20 @@ export default function Jars() {
           <p className="text-muted-foreground text-sm">
             Organize your wins into categories
           </p>
+          <p className="text-muted-foreground/70 text-xs mt-1">
+            Group your wins by fitness, work, habits, or mindset.
+          </p>
           
           {/* Limit indicator for free users */}
           {!isPro && (
-            <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-muted text-muted-foreground text-xs font-medium">
-              <Lock className="h-3 w-3" />
-              {jars.length}/{FREE_JAR_LIMIT} free jars
+            <div className="mt-3 flex flex-col items-center gap-1">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-muted text-muted-foreground text-xs font-medium">
+                <Lock className="h-3 w-3" />
+                {jars.length}/{FREE_JAR_LIMIT} free jars
+              </div>
+              <p className="text-muted-foreground/60 text-xs">
+                Pro lets you organize wins by life areas.
+              </p>
             </div>
           )}
         </motion.div>
