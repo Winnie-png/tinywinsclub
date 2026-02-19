@@ -170,6 +170,7 @@ export default function Jars() {
                     value={newJarName}
                     onChange={(e) => setNewJarName(e.target.value)}
                     placeholder="Jar name..."
+                    maxLength={100}
                     className="flex-1"
                     autoFocus
                     onKeyDown={(e) => {
@@ -246,6 +247,7 @@ export default function Jars() {
                       <Input
                         value={editingName}
                         onChange={(e) => setEditingName(e.target.value)}
+                        maxLength={100}
                         className="flex-1"
                         autoFocus
                         onKeyDown={(e) => {
