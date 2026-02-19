@@ -41,7 +41,12 @@ export default function Auth() {
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const redirectUrl = searchParams.get("redirect") || "/";
+  // Validate redirect to only allow internal paths — prevents open redirect attacks
+  const rawRedirect = searchParams.get("redirect") || "/";
+  const redirectUrl =
+    rawRedirect.startsWith("/") && !rawRedirect.startsWith("//")
+      ? rawRedirect
+      : "/";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
