@@ -69,11 +69,21 @@ export function useJars() {
       return null;
     }
 
+    const trimmed = name.trim();
+    if (!trimmed) {
+      toast.error("Jar name cannot be empty");
+      return null;
+    }
+    if (trimmed.length > 100) {
+      toast.error("Jar name must be 100 characters or less");
+      return null;
+    }
+
     const { data, error } = await supabase
       .from("jars")
       .insert({
         user_id: user.id,
-        name,
+        name: trimmed,
       })
       .select()
       .single();
@@ -102,9 +112,19 @@ export function useJars() {
       return false;
     }
 
+    const trimmed = name.trim();
+    if (!trimmed) {
+      toast.error("Jar name cannot be empty");
+      return false;
+    }
+    if (trimmed.length > 100) {
+      toast.error("Jar name must be 100 characters or less");
+      return false;
+    }
+
     const { error } = await supabase
       .from("jars")
-      .update({ name })
+      .update({ name: trimmed })
       .eq("id", id)
       .eq("user_id", user.id);
 
