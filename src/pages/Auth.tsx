@@ -32,12 +32,20 @@ const GoogleIcon = () => (
   </svg>
 );
 
+// Apple logo SVG
+const AppleIcon = () => (
+  <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
+    <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
+  </svg>
+);
+
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [appleLoading, setAppleLoading] = useState(false);
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -77,6 +85,17 @@ export default function Auth() {
     }
   };
 
+  const handleAppleSignIn = async () => {
+    setAppleLoading(true);
+    const { error } = await lovable.auth.signInWithOAuth("apple", {
+      redirect_uri: window.location.origin,
+    });
+    if (error) {
+      toast.error("Apple sign-in failed. Please try again.");
+      setAppleLoading(false);
+    }
+  };
+
   return (
     <Layout>
       <div className="pt-4">
@@ -110,17 +129,31 @@ export default function Auth() {
           transition={{ delay: 0.15 }}
           className="card-cozy p-6 mb-4"
         >
-          <Button
-            type="button"
-            variant="outline"
-            size="lg"
-            className="w-full h-12 text-base font-medium rounded-xl flex items-center gap-3"
-            onClick={handleGoogleSignIn}
-            disabled={googleLoading}
-          >
-            <GoogleIcon />
-            {googleLoading ? "Connecting..." : "Continue with Google"}
-          </Button>
+          <div className="space-y-3">
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              className="w-full h-12 text-base font-medium rounded-xl flex items-center gap-3"
+              onClick={handleGoogleSignIn}
+              disabled={googleLoading || appleLoading}
+            >
+              <GoogleIcon />
+              {googleLoading ? "Connecting..." : "Continue with Google"}
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              className="w-full h-12 text-base font-medium rounded-xl flex items-center gap-3"
+              onClick={handleAppleSignIn}
+              disabled={appleLoading || googleLoading}
+            >
+              <AppleIcon />
+              {appleLoading ? "Connecting..." : "Continue with Apple"}
+            </Button>
+          </div>
         </motion.div>
 
         <div className="flex items-center gap-3 mb-4">
