@@ -5,47 +5,44 @@ import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/Confetti";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Crown, Sparkles, Cookie } from "lucide-react";
 
 export default function WelcomePro() {
   const [showConfetti, setShowConfetti] = useState(false);
-  const [upgrading, setUpgrading] = useState(true);
-  const { user, refreshProfile } = useAuth();
+  const [checking, setChecking] = useState(true);
+  const [isPro, setIsPro] = useState(false);
+  const { user, refreshProfile, isPro: contextIsPro } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const upgradeToPro = async () => {
+    const checkProStatus = async () => {
       if (!user) {
-        toast.error("Please sign in to activate your Pro membership");
+        toast.error("Please sign in to view your membership status");
         navigate("/auth");
         return;
       }
 
       try {
-        const { error } = await supabase
-          .from("profiles")
-          .update({ is_pro: true })
-          .eq("user_id", user.id);
-
-        if (error) throw error;
-
         await refreshProfile();
-        setUpgrading(false);
-        setShowConfetti(true);
-        toast.success("Pro features unlocked! 🎉");
+        setChecking(false);
       } catch (error) {
-        console.error("Error upgrading to Pro:", error);
-        toast.error("Something went wrong. Please contact support.");
-        setUpgrading(false);
+        console.error("Error checking pro status:", error);
+        setChecking(false);
       }
     };
 
-    upgradeToPro();
+    checkProStatus();
   }, [user, navigate, refreshProfile]);
 
-  if (upgrading) {
+  useEffect(() => {
+    if (!checking && contextIsPro) {
+      setIsPro(true);
+      setShowConfetti(true);
+    }
+  }, [checking, contextIsPro]);
+
+  if (checking) {
     return (
       <Layout>
         <div className="flex flex-col items-center justify-center min-h-[60vh]">
@@ -54,7 +51,49 @@ export default function WelcomePro() {
             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
             className="w-16 h-16 rounded-full border-4 border-primary border-t-transparent"
           />
-          <p className="mt-4 text-muted-foreground">Activating your Pro membership...</p>
+          <p className="mt-4 text-muted-foreground">Checking your membership status...</p>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!isPro) {
+    return (
+      <Layout>
+        <div className="pt-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="card-cozy p-6"
+          >
+            <Crown className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h1 className="text-2xl font-display font-bold text-foreground mb-3">
+              Payment Processing
+            </h1>
+            <p className="text-muted-foreground mb-6 max-w-xs mx-auto">
+              Your payment is being processed. Pro features will be activated shortly. Please check back in a moment.
+            </p>
+            <div className="space-y-3">
+              <Button
+                variant="outline"
+                onClick={async () => {
+                  setChecking(true);
+                  await refreshProfile();
+                  setChecking(false);
+                }}
+                className="w-full"
+              >
+                Check Again
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => navigate("/jar")}
+                className="w-full"
+              >
+                Go to My Jar
+              </Button>
+            </div>
+          </motion.div>
         </div>
       </Layout>
     );
@@ -75,7 +114,6 @@ export default function WelcomePro() {
             <div className="w-24 h-24 rounded-full bg-gradient-to-br from-celebration/30 via-primary/20 to-mint/30 flex items-center justify-center">
               <Crown className="h-12 w-12 text-primary" />
             </div>
-            {/* Sparkles around crown */}
             {[...Array(6)].map((_, i) => (
               <motion.div
                 key={i}
