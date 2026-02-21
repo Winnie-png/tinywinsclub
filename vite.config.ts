@@ -11,7 +11,7 @@ function applePayHeaders() {
     configureServer(server: any) {
       server.middlewares.use((req: any, res: any, next: any) => {
         if (req.url === "/.well-known/apple-developer-merchantid-domain-association") {
-          res.setHeader("Content-Type", "text/plain");
+          res.setHeader("Content-Type", "application/text");
         }
         next();
       });
