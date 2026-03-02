@@ -121,7 +121,24 @@ export default function Pricing() {
               transition={{ delay: 0.6, type: "spring", stiffness: 200 }}
               className="space-y-4"
             >
-              {/* Primary Button - One-time */}
+              {/* Apple Pay Button */}
+              <div className="space-y-2">
+                <Button
+                  size="lg"
+                  className="w-full h-14 text-lg font-semibold rounded-2xl bg-foreground text-background hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-300"
+                  onClick={handleOneTimeClick}
+                >
+                  <svg className="h-5 w-5 mr-1" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.72 7.54c-.46.52-1.21.92-1.94.86-.09-.75.27-1.54.7-2.03.46-.53 1.26-.9 1.91-.93.08.78-.22 1.56-.67 2.1zM18.37 8.57c-1.07-.06-1.99.61-2.5.61-.51 0-1.3-.58-2.14-.56-1.1.02-2.12.64-2.68 1.63-1.15 1.99-.3 4.93.82 6.55.54.79 1.19 1.68 2.05 1.65.82-.03 1.13-.53 2.12-.53s1.27.53 2.13.51c.89-.01 1.44-.8 1.98-1.59.62-.91.88-1.79.89-1.83-.02-.01-1.71-.66-1.73-2.61-.01-1.63 1.33-2.41 1.39-2.45-.76-1.12-1.93-1.24-2.33-1.28z"/>
+                  </svg>
+                  Pay with Apple Pay
+                </Button>
+                <p className="text-center text-xs text-muted-foreground">
+                  Processed securely via Paystack
+                </p>
+              </div>
+
+              {/* M-Pesa / Card Button */}
               <div className="space-y-2">
                 <Button 
                   size="lg" 
@@ -137,7 +154,7 @@ export default function Pricing() {
                   />
                 </Button>
                 <p className="text-center text-xs text-muted-foreground">
-                  Best for M-Pesa, Apple Pay, & Cards
+                  Best for M-Pesa & Cards
                 </p>
               </div>
 
