@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
@@ -46,7 +46,7 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [appleLoading, setAppleLoading] = useState(false);
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   // Validate redirect to only allow internal paths — prevents open redirect attacks
@@ -55,6 +55,13 @@ export default function Auth() {
     rawRedirect.startsWith("/") && !rawRedirect.startsWith("//")
       ? rawRedirect
       : "/";
+
+  // Redirect authenticated users away from auth page
+  useEffect(() => {
+    if (!authLoading && user) {
+      navigate(redirectUrl, { replace: true });
+    }
+  }, [user, authLoading, navigate, redirectUrl]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
