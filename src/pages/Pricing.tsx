@@ -1,9 +1,13 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { Check, Sparkles, TrendingUp, Lightbulb, Crown, CreditCard } from "lucide-react";
+import { Check, Sparkles, TrendingUp, Lightbulb, Crown, CreditCard, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { useEffect } from "react";
 
 const benefits = [
   {
@@ -24,23 +28,60 @@ const benefits = [
 ];
 
 export default function Pricing() {
-  const { user } = useAuth();
+  const { user, isPro, refreshProfile } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [loading, setLoading] = useState<string | null>(null);
 
-  const handleOneTimeClick = () => {
+  // Handle payment success callback
+  useEffect(() => {
+    if (searchParams.get("payment") === "success") {
+      toast.success("Payment successful! Activating Pro...");
+      // Poll for pro status update (webhook may take a moment)
+      const interval = setInterval(async () => {
+        await refreshProfile();
+      }, 2000);
+
+      // Stop polling after 30s
+      const timeout = setTimeout(() => clearInterval(interval), 30000);
+
+      return () => {
+        clearInterval(interval);
+        clearTimeout(timeout);
+      };
+    }
+  }, [searchParams, refreshProfile]);
+
+  // Redirect once pro is activated
+  useEffect(() => {
+    if (isPro && searchParams.get("payment") === "success") {
+      toast.success("🎉 You're now a Pro member!");
+      navigate("/", { replace: true });
+    }
+  }, [isPro, searchParams, navigate]);
+
+  const initializePayment = async (plan: "one-time" | "subscription") => {
     if (!user) {
       navigate("/auth?redirect=/pricing");
       return;
     }
-    window.open("https://paystack.shop/pay/tinywins-pro-access", "_blank", "noopener,noreferrer");
-  };
 
-  const handleSubscriptionClick = () => {
-    if (!user) {
-      navigate("/auth?redirect=/pricing");
-      return;
+    setLoading(plan);
+    try {
+      const { data, error } = await supabase.functions.invoke("initialize-payment", {
+        body: { plan },
+      });
+
+      if (error) throw error;
+      if (!data?.authorization_url) throw new Error("No payment URL received");
+
+      window.location.href = data.authorization_url;
+    } catch (err: any) {
+      console.error("Payment init error:", err);
+      toast.error("Failed to initialize payment. Please try again.");
+    } finally {
+      setLoading(null);
     }
-    window.open("https://paystack.shop/pay/tinywins-pro", "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -82,8 +123,8 @@ export default function Pricing() {
           
           <div className="relative">
             <div className="flex flex-col items-center gap-1 mb-6">
-              <span className="text-3xl font-display font-bold text-foreground">Only 400 KES</span>
-              <span className="text-muted-foreground">(~$3.00 USD) / month</span>
+              <span className="text-3xl font-display font-bold text-foreground">Only 10 KES</span>
+              <span className="text-muted-foreground">(Test price) / one-time</span>
             </div>
 
             {/* Benefits List */}
@@ -121,32 +162,20 @@ export default function Pricing() {
               transition={{ delay: 0.6, type: "spring", stiffness: 200 }}
               className="space-y-4"
             >
-              {/* Apple Pay Button */}
-              <div className="space-y-2">
-                <Button
-                  size="lg"
-                  className="w-full h-14 text-lg font-semibold rounded-2xl bg-foreground text-background hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-300"
-                  onClick={handleOneTimeClick}
-                >
-                  <svg className="h-5 w-5 mr-1" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M17.72 7.54c-.46.52-1.21.92-1.94.86-.09-.75.27-1.54.7-2.03.46-.53 1.26-.9 1.91-.93.08.78-.22 1.56-.67 2.1zM18.37 8.57c-1.07-.06-1.99.61-2.5.61-.51 0-1.3-.58-2.14-.56-1.1.02-2.12.64-2.68 1.63-1.15 1.99-.3 4.93.82 6.55.54.79 1.19 1.68 2.05 1.65.82-.03 1.13-.53 2.12-.53s1.27.53 2.13.51c.89-.01 1.44-.8 1.98-1.59.62-.91.88-1.79.89-1.83-.02-.01-1.71-.66-1.73-2.61-.01-1.63 1.33-2.41 1.39-2.45-.76-1.12-1.93-1.24-2.33-1.28z"/>
-                  </svg>
-                  Pay with Apple Pay
-                </Button>
-                <p className="text-center text-xs text-muted-foreground">
-                  Processed securely via Paystack
-                </p>
-              </div>
-
               {/* M-Pesa / Card Button */}
               <div className="space-y-2">
                 <Button 
                   size="lg" 
                   className="w-full h-14 text-lg font-display font-semibold rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 btn-bounce"
-                  onClick={handleOneTimeClick}
+                  onClick={() => initializePayment("one-time")}
+                  disabled={loading !== null}
                 >
-                  <Crown className="h-5 w-5 mr-2" />
-                  Get 30 Days Pro
+                  {loading === "one-time" ? (
+                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                  ) : (
+                    <Crown className="h-5 w-5 mr-2" />
+                  )}
+                  Get Pro for 10 KES
                   <img 
                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/512px-M-PESA_LOGO-01.svg.png" 
                     alt="M-Pesa" 
@@ -154,20 +183,25 @@ export default function Pricing() {
                   />
                 </Button>
                 <p className="text-center text-xs text-muted-foreground">
-                  Best for M-Pesa & Cards
+                  Best for M-Pesa & Cards • Secure via Paystack
                 </p>
               </div>
 
-              {/* Secondary Button - Subscription */}
+              {/* Subscription Button */}
               <div className="space-y-2">
                 <Button 
                   size="lg" 
                   variant="outline"
                   className="w-full h-12 text-base font-display font-semibold rounded-2xl border-2 hover:bg-muted/50 transition-all duration-300"
-                  onClick={handleSubscriptionClick}
+                  onClick={() => initializePayment("subscription")}
+                  disabled={loading !== null}
                 >
-                  <CreditCard className="h-5 w-5 mr-2" />
-                  Monthly Subscription
+                  {loading === "subscription" ? (
+                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                  ) : (
+                    <CreditCard className="h-5 w-5 mr-2" />
+                  )}
+                  Monthly Subscription — 10 KES
                 </Button>
                 <p className="text-center text-xs text-muted-foreground">
                   Automatic monthly billing. Card only.
