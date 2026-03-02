@@ -56,6 +56,13 @@ export default function Auth() {
       ? rawRedirect
       : "/";
 
+  // Redirect authenticated users away from auth page
+  useEffect(() => {
+    if (!authLoading && user) {
+      navigate(redirectUrl, { replace: true });
+    }
+  }, [user, authLoading, navigate, redirectUrl]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
