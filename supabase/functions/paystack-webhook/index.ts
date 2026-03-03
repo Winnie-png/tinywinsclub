@@ -64,11 +64,18 @@ Deno.serve(async (req) => {
       return new Response("Missing user_id", { status: 400, headers: corsHeaders });
     }
 
-    // Validate userId is a UUID
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!uuidRegex.test(userId)) {
       console.error("Invalid user_id format");
       return new Response("Invalid user_id format", { status: 400, headers: corsHeaders });
+    }
+
+    // Verify payment amount matches Pro price (1000 kobo = 10 KES test, 40000 kobo = 400 KES prod)
+    const allowedAmounts = [1000, 40000];
+    const paidAmount = event.data?.amount;
+    if (!allowedAmounts.includes(paidAmount)) {
+      console.error(`Unexpected payment amount: ${paidAmount} kobo for user ${userId}`);
+      return new Response("Invalid payment amount", { status: 400, headers: corsHeaders });
     }
 
     const supabase = createClient(
@@ -86,7 +93,9 @@ Deno.serve(async (req) => {
       return new Response("Database error", { status: 500, headers: corsHeaders });
     }
 
-    console.log(`Successfully upgraded user ${userId} to Pro`);
+    console.log(`Successfully upgraded user ${userId} to Pro (amount: ${paidAmount} kobo)`);
+  } else {
+    console.log(`Ignoring unhandled event type: ${event.event}`);
   }
 
   return new Response("OK", { status: 200, headers: corsHeaders });
