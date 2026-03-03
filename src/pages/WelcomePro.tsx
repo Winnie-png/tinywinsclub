@@ -45,11 +45,12 @@ export default function WelcomePro() {
   }, [user, navigate, refreshProfile]);
 
   useEffect(() => {
-    if (!checking && contextIsPro) {
+    if (contextIsPro) {
+      setChecking(false);
       setIsPro(true);
       setShowConfetti(true);
     }
-  }, [checking, contextIsPro]);
+  }, [contextIsPro]);
 
   if (checking) {
     return (
