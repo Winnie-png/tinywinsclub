@@ -52,11 +52,10 @@ export default function Pricing() {
     }
   }, [searchParams, refreshProfile]);
 
-  // Redirect once pro is activated
+  // Redirect to welcome-pro once pro is activated
   useEffect(() => {
     if (isPro && searchParams.get("payment") === "success") {
-      toast.success("🎉 You're now a Pro member!");
-      navigate("/", { replace: true });
+      navigate("/welcome-pro", { replace: true });
     }
   }, [isPro, searchParams, navigate]);
 

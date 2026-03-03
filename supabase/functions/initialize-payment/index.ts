@@ -69,7 +69,7 @@ Deno.serve(async (req) => {
       user_id: userId,
       plan: body.plan || "one-time",
     },
-    callback_url: `${req.headers.get("origin") || "https://tinywinsclub.lovable.app"}/pricing?payment=success`,
+    callback_url: `${req.headers.get("origin") || "https://tinywinsclub.lovable.app"}/welcome-pro`,
   };
 
   // If subscription, attach a plan code (user can set up in Paystack dashboard)

@@ -16,23 +16,32 @@ export default function WelcomePro() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const checkProStatus = async () => {
-      if (!user) {
-        toast.error("Please sign in to view your membership status");
-        navigate("/auth");
-        return;
-      }
+    if (!user) {
+      toast.error("Please sign in to view your membership status");
+      navigate("/auth");
+      return;
+    }
 
+    // Poll for pro status every 2s (webhook may take a moment)
+    const poll = async () => {
       try {
         await refreshProfile();
-        setChecking(false);
       } catch (error) {
         console.error("Error checking pro status:", error);
-        setChecking(false);
       }
     };
 
-    checkProStatus();
+    poll();
+    const interval = setInterval(poll, 2000);
+    const timeout = setTimeout(() => {
+      clearInterval(interval);
+      setChecking(false);
+    }, 30000);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
   }, [user, navigate, refreshProfile]);
 
   useEffect(() => {
