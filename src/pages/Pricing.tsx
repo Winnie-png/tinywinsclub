@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { Check, Sparkles, TrendingUp, Lightbulb, Crown, CreditCard, Loader2 } from "lucide-react";
+import { Check, Sparkles, TrendingUp, Lightbulb, Crown, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -122,8 +122,8 @@ export default function Pricing() {
           
           <div className="relative">
             <div className="flex flex-col items-center gap-1 mb-6">
-              <span className="text-3xl font-display font-bold text-foreground">Only 10 KES</span>
-              <span className="text-muted-foreground">(Test price) / one-time</span>
+              <span className="text-3xl font-display font-bold text-foreground">400 KES</span>
+              <span className="text-muted-foreground">≈ $3.00 USD • 30 days of Pro</span>
             </div>
 
             {/* Benefits List */}
@@ -154,58 +154,34 @@ export default function Pricing() {
               ))}
             </div>
 
-            {/* Payment Buttons */}
+            {/* Payment Button */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.6, type: "spring", stiffness: 200 }}
-              className="space-y-4"
+              className="space-y-2"
             >
-              {/* M-Pesa / Card Button */}
-              <div className="space-y-2">
-                <Button 
-                  size="lg" 
-                  className="w-full h-14 text-lg font-display font-semibold rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 btn-bounce"
-                  onClick={() => initializePayment("one-time")}
-                  disabled={loading !== null}
-                >
-                  {loading === "one-time" ? (
-                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                  ) : (
-                    <Crown className="h-5 w-5 mr-2" />
-                  )}
-                  Get Pro for 10 KES
-                  <img 
-                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/512px-M-PESA_LOGO-01.svg.png" 
-                    alt="M-Pesa" 
-                    className="h-5 ml-2"
-                  />
-                </Button>
-                <p className="text-center text-xs text-muted-foreground">
-                  Best for M-Pesa & Cards • Secure via Paystack
-                </p>
-              </div>
-
-              {/* Subscription Button */}
-              <div className="space-y-2">
-                <Button 
-                  size="lg" 
-                  variant="outline"
-                  className="w-full h-12 text-base font-display font-semibold rounded-2xl border-2 hover:bg-muted/50 transition-all duration-300"
-                  onClick={() => initializePayment("subscription")}
-                  disabled={loading !== null}
-                >
-                  {loading === "subscription" ? (
-                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                  ) : (
-                    <CreditCard className="h-5 w-5 mr-2" />
-                  )}
-                  Monthly Subscription — 10 KES
-                </Button>
-                <p className="text-center text-xs text-muted-foreground">
-                  Automatic monthly billing. Card only.
-                </p>
-              </div>
+              <Button 
+                size="lg" 
+                className="w-full h-14 text-lg font-display font-semibold rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 btn-bounce"
+                onClick={() => initializePayment("one-time")}
+                disabled={loading !== null}
+              >
+                {loading === "one-time" ? (
+                  <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                ) : (
+                  <Crown className="h-5 w-5 mr-2" />
+                )}
+                Unlock Pro – 30 Days • 400 KES
+                <img 
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/512px-M-PESA_LOGO-01.svg.png" 
+                  alt="M-Pesa" 
+                  className="h-5 ml-2"
+                />
+              </Button>
+              <p className="text-center text-xs text-muted-foreground">
+                One-time payment • Works with M-Pesa & Cards • Secure via Paystack
+              </p>
             </motion.div>
           </div>
         </motion.div>
