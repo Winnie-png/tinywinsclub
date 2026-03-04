@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { Check, Sparkles, TrendingUp, Lightbulb, Crown, Loader2, CreditCard } from "lucide-react";
+import { Check, Sparkles, TrendingUp, Lightbulb, Crown, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -105,7 +105,7 @@ export default function Pricing() {
             Upgrade to Tiny Wins Pro
           </h1>
           <p className="text-lg text-muted-foreground font-medium">
-            Choose Your Plan
+            Your wins deserve more space
           </p>
         </motion.div>
 
@@ -162,49 +162,46 @@ export default function Pricing() {
             >
               <Button 
                 size="lg" 
-                className="w-full h-16 font-display font-semibold rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 btn-bounce px-4 sm:px-6"
+                className="w-full h-14 font-display font-semibold rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 btn-bounce"
                 onClick={() => initializePayment("one-time")}
                 disabled={loading !== null}
               >
-                <div className="flex w-full items-center justify-between gap-3">
-                  {/* Left Icon */}
-                  <div className="flex-shrink-0">
-                    {loading === "one-time" ? (
-                      <Loader2 className="h-5 w-5 sm:h-6 sm:w-6 animate-spin" />
-                    ) : (
-                      <Crown className="h-5 w-5 sm:h-6 sm:w-6" />
-                    )}
-                  </div>
-                  
-                  {/* Center Text */}
-                  <span className="flex-1 text-center text-sm sm:text-base whitespace-nowrap px-2">
+                <div className="flex w-full items-center justify-center gap-2.5">
+                  {loading === "one-time" ? (
+                    <Loader2 className="h-5 w-5 animate-spin flex-shrink-0" />
+                  ) : (
+                    <Crown className="h-5 w-5 flex-shrink-0" />
+                  )}
+                  <span className="text-[15px] sm:text-base font-semibold whitespace-nowrap">
                     Unlock Pro – 30 Days • 400 KES
                   </span>
-                  
-                  {/* Right Payment Icons */}
-                  <div className="flex items-center gap-1.5 flex-shrink-0">
-                    {/* Card icons indicator */}
-                    <div className="flex items-center gap-0.5">
-                      <div className="w-5 h-3 sm:w-6 sm:h-3.5 bg-white/90 rounded-sm flex items-center justify-center text-xs font-bold text-blue-600">
-                        ◆
-                      </div>
-                      <div className="w-5 h-3 sm:w-6 sm:h-3.5 bg-white/90 rounded-sm flex items-center justify-center text-xs font-bold text-red-600">
-                        ◆
-                      </div>
-                      <div className="w-5 h-3 sm:w-6 sm:h-3.5 bg-white/90 rounded-sm flex items-center justify-center text-xs font-bold text-green-600">
-                        ◆
-                      </div>
-                    </div>
-                    
-                    {/* M-Pesa Logo */}
-                    <img 
-                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/512px-M-PESA_LOGO-01.svg.png" 
-                      alt="M-Pesa" 
-                      className="h-5 sm:h-6"
-                    />
-                  </div>
                 </div>
               </Button>
+
+              {/* Payment method icons below button */}
+              <div className="flex items-center justify-center gap-3 mt-3">
+                <span className="text-xs text-muted-foreground">Pays with</span>
+                <div className="flex items-center gap-2">
+                  {/* Visa */}
+                  <svg className="h-5 w-auto" viewBox="0 0 48 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="48" height="16" rx="2" fill="hsl(var(--muted))" />
+                    <text x="24" y="11.5" textAnchor="middle" fontSize="9" fontWeight="bold" fill="hsl(var(--primary))">VISA</text>
+                  </svg>
+                  {/* Mastercard */}
+                  <svg className="h-5 w-auto" viewBox="0 0 32 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="32" height="16" rx="2" fill="hsl(var(--muted))" />
+                    <circle cx="13" cy="8" r="5" fill="#EB001B" opacity="0.8" />
+                    <circle cx="19" cy="8" r="5" fill="#F79E1B" opacity="0.8" />
+                  </svg>
+                  {/* M-Pesa */}
+                  <img 
+                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/512px-M-PESA_LOGO-01.svg.png" 
+                    alt="M-Pesa" 
+                    className="h-5"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
             </motion.div>
           </div>
         </motion.div>
