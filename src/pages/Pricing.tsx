@@ -122,8 +122,8 @@ export default function Pricing() {
           
           <div className="relative">
             <div className="flex flex-col items-center gap-1 mb-6">
-              <span className="text-3xl font-display font-bold text-foreground">Only 10 KES</span>
-              <span className="text-muted-foreground">(Test price) / one-time</span>
+              <span className="text-3xl font-display font-bold text-foreground">400 KES</span>
+              <span className="text-muted-foreground">≈ $3.00 USD • 30 days of Pro</span>
             </div>
 
             {/* Benefits List */}
