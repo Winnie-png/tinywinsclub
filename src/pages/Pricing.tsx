@@ -155,39 +155,57 @@ export default function Pricing() {
             </div>
 
             {/* Payment Button */}
-             <motion.div
-               initial={{ opacity: 0, scale: 0.9 }}
-               animate={{ opacity: 1, scale: 1 }}
-               transition={{ delay: 0.6, type: "spring", stiffness: 200 }}
-             >
-               <Button 
-                 size="lg" 
-                 className="w-full h-14 font-display font-semibold rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 btn-bounce flex items-center justify-between px-6"
-                 onClick={() => initializePayment("one-time")}
-                 disabled={loading !== null}
-               >
-                 <div className="flex items-center gap-3 flex-shrink-0">
-                   {loading === "one-time" ? (
-                     <Loader2 className="h-5 w-5 animate-spin" />
-                   ) : (
-                     <Crown className="h-5 w-5" />
-                   )}
-                 </div>
-                 
-                 <span className="flex-1 text-center text-base sm:text-lg">
-                   Unlock Pro – 30 Days • 400 KES
-                 </span>
-                 
-                 <div className="flex items-center gap-2 flex-shrink-0">
-                   <CreditCard className="h-5 w-5" />
-                   <img 
-                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/512px-M-PESA_LOGO-01.svg.png" 
-                     alt="M-Pesa" 
-                     className="h-5"
-                   />
-                 </div>
-               </Button>
-             </motion.div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.6, type: "spring", stiffness: 200 }}
+            >
+              <Button 
+                size="lg" 
+                className="w-full h-16 font-display font-semibold rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 btn-bounce px-4 sm:px-6"
+                onClick={() => initializePayment("one-time")}
+                disabled={loading !== null}
+              >
+                <div className="flex w-full items-center justify-between gap-3">
+                  {/* Left Icon */}
+                  <div className="flex-shrink-0">
+                    {loading === "one-time" ? (
+                      <Loader2 className="h-5 w-5 sm:h-6 sm:w-6 animate-spin" />
+                    ) : (
+                      <Crown className="h-5 w-5 sm:h-6 sm:w-6" />
+                    )}
+                  </div>
+                  
+                  {/* Center Text */}
+                  <span className="flex-1 text-center text-sm sm:text-base whitespace-nowrap px-2">
+                    Unlock Pro – 30 Days • 400 KES
+                  </span>
+                  
+                  {/* Right Payment Icons */}
+                  <div className="flex items-center gap-1.5 flex-shrink-0">
+                    {/* Card icons indicator */}
+                    <div className="flex items-center gap-0.5">
+                      <div className="w-5 h-3 sm:w-6 sm:h-3.5 bg-white/90 rounded-sm flex items-center justify-center text-xs font-bold text-blue-600">
+                        ◆
+                      </div>
+                      <div className="w-5 h-3 sm:w-6 sm:h-3.5 bg-white/90 rounded-sm flex items-center justify-center text-xs font-bold text-red-600">
+                        ◆
+                      </div>
+                      <div className="w-5 h-3 sm:w-6 sm:h-3.5 bg-white/90 rounded-sm flex items-center justify-center text-xs font-bold text-green-600">
+                        ◆
+                      </div>
+                    </div>
+                    
+                    {/* M-Pesa Logo */}
+                    <img 
+                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/512px-M-PESA_LOGO-01.svg.png" 
+                      alt="M-Pesa" 
+                      className="h-5 sm:h-6"
+                    />
+                  </div>
+                </div>
+              </Button>
+            </motion.div>
           </div>
         </motion.div>
 
