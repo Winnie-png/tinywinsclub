@@ -155,34 +155,39 @@ export default function Pricing() {
             </div>
 
             {/* Payment Button */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.6, type: "spring", stiffness: 200 }}
-              className="space-y-2"
-            >
-              <Button 
-                size="lg" 
-                className="w-full h-14 text-lg font-display font-semibold rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 btn-bounce"
-                onClick={() => initializePayment("one-time")}
-                disabled={loading !== null}
-              >
-                {loading === "one-time" ? (
-                  <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                ) : (
-                  <Crown className="h-5 w-5 mr-2" />
-                )}
-                Unlock Pro – 30 Days • 400 KES
-                <img 
-                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/512px-M-PESA_LOGO-01.svg.png" 
-                  alt="M-Pesa" 
-                  className="h-5 ml-2"
-                />
-              </Button>
-              <p className="text-center text-xs text-muted-foreground">
-                One-time payment • Works with M-Pesa & Cards • Secure via Paystack
-              </p>
-            </motion.div>
+             <motion.div
+               initial={{ opacity: 0, scale: 0.9 }}
+               animate={{ opacity: 1, scale: 1 }}
+               transition={{ delay: 0.6, type: "spring", stiffness: 200 }}
+             >
+               <Button 
+                 size="lg" 
+                 className="w-full h-14 font-display font-semibold rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 btn-bounce flex items-center justify-between px-6"
+                 onClick={() => initializePayment("one-time")}
+                 disabled={loading !== null}
+               >
+                 <div className="flex items-center gap-3 flex-shrink-0">
+                   {loading === "one-time" ? (
+                     <Loader2 className="h-5 w-5 animate-spin" />
+                   ) : (
+                     <Crown className="h-5 w-5" />
+                   )}
+                 </div>
+                 
+                 <span className="flex-1 text-center text-base sm:text-lg">
+                   Unlock Pro – 30 Days • 400 KES
+                 </span>
+                 
+                 <div className="flex items-center gap-2 flex-shrink-0">
+                   <CreditCard className="h-5 w-5" />
+                   <img 
+                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/512px-M-PESA_LOGO-01.svg.png" 
+                     alt="M-Pesa" 
+                     className="h-5"
+                   />
+                 </div>
+               </Button>
+             </motion.div>
           </div>
         </motion.div>
 
