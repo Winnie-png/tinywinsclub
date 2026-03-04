@@ -58,8 +58,8 @@ Deno.serve(async (req) => {
     body = {};
   }
 
-  // Always 10 KES = 1000 kobo (test price)
-  const amountKobo = 1000;
+  // 400 KES = 40000 kobo (production price)
+  const amountKobo = 40000;
 
   const paystackPayload: Record<string, unknown> = {
     email,

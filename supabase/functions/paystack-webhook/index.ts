@@ -70,8 +70,8 @@ Deno.serve(async (req) => {
       return new Response("Invalid user_id format", { status: 400, headers: corsHeaders });
     }
 
-    // Verify payment amount matches Pro price (1000 kobo = 10 KES test, 40000 kobo = 400 KES prod)
-    const allowedAmounts = [1000, 40000];
+    // Verify payment amount matches Pro price (40000 kobo = 400 KES)
+    const allowedAmounts = [40000];
     const paidAmount = event.data?.amount;
     if (!allowedAmounts.includes(paidAmount)) {
       console.error(`Unexpected payment amount: ${paidAmount} kobo for user ${userId}`);
