@@ -208,16 +208,6 @@ export default function Pricing() {
             </motion.div>
           </div>
         </motion.div>
-
-        {/* Trust Note */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.7 }}
-          className="text-center text-sm text-muted-foreground"
-        >
-          💳 Pay easily with M-Pesa or any major Credit Card globally
-        </motion.p>
       </div>
     </Layout>
   );
