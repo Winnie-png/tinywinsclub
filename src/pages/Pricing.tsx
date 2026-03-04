@@ -105,7 +105,7 @@ export default function Pricing() {
             Upgrade to Tiny Wins Pro
           </h1>
           <p className="text-lg text-muted-foreground font-medium">
-            Choose Your Plan
+            Your wins deserve more space
           </p>
         </motion.div>
 
