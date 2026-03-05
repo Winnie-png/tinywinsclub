@@ -93,34 +93,29 @@ export default function Profile() {
                 Get unlimited wins, jars, insights, and more for just 400 KES/month
               </p>
               
-              {/* Primary Button - One-time (Same as Pricing page) */}
-              <div className="space-y-3">
-                <Button 
-                  onClick={handleOneTimeClick}
-                  className="w-full h-12 text-base font-display font-semibold rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg"
-                >
-                  <Crown className="h-5 w-5 mr-2" />
-                  Get 30 Days Pro
-                  <img 
-                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/512px-M-PESA_LOGO-01.svg.png" 
-                    alt="M-Pesa" 
-                    className="h-5 ml-2"
-                  />
-                </Button>
-                <p className="text-center text-xs text-muted-foreground">
-                  M-Pesa, Apple Pay, & Cards
-                </p>
-                
-                {/* Secondary Button - Subscription */}
-                <Button 
-                  variant="outline"
-                  onClick={handleSubscriptionClick}
-                  className="w-full h-10 text-sm font-display font-semibold rounded-xl border-2 hover:bg-muted/50"
-                >
-                  <CreditCard className="h-4 w-4 mr-2" />
-                  Monthly Subscription
-                </Button>
-              </div>
+               {/* Primary Button - One-time 30 Days Pro */}
+               <div className="space-y-2.5">
+                 <Button 
+                   onClick={handleOneTimeClick}
+                   className="w-full h-14 font-display font-semibold rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg flex items-center justify-between px-4 sm:px-6"
+                 >
+                   <Crown className="h-5 w-5 flex-shrink-0" />
+                   <span className="flex-1 text-center text-base whitespace-nowrap">
+                     Unlock Pro – 400 KES
+                   </span>
+                   <img 
+                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/512px-M-PESA_LOGO-01.svg.png" 
+                     alt="M-Pesa" 
+                     className="h-5 flex-shrink-0"
+                   />
+                 </Button>
+                 <p className="text-center text-xs text-primary font-medium">
+                   Instant activation after payment
+                 </p>
+                 <p className="text-center text-xs text-muted-foreground">
+                   Pay with M-Pesa • Visa • Mastercard
+                 </p>
+               </div>
             </motion.div>
           )}
 
