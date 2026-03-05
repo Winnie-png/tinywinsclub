@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { User, LogOut, Crown, Mail, CreditCard } from "lucide-react";
+import { User, LogOut, Crown, Mail } from "lucide-react";
 
 export default function Profile() {
   const { user, isPro, signOut } = useAuth();
