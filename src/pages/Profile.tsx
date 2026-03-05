@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { User, LogOut, Crown, Mail, CreditCard } from "lucide-react";
+import { User, LogOut, Crown, Mail } from "lucide-react";
 
 export default function Profile() {
   const { user, isPro, signOut } = useAuth();
@@ -93,27 +93,46 @@ export default function Profile() {
                 Get unlimited wins, jars, insights, and more for just 400 KES/month
               </p>
               
-               {/* Primary Button - One-time 30 Days Pro */}
-               <div className="space-y-2.5">
+               {/* Primary Button - Clean and Centered */}
+               <div className="space-y-3">
                  <Button 
                    onClick={handleOneTimeClick}
-                   className="w-full h-14 font-display font-semibold rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg flex items-center justify-between px-4 sm:px-6"
+                   className="w-full h-14 font-display font-semibold rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg"
                  >
-                   <Crown className="h-5 w-5 flex-shrink-0" />
-                   <span className="flex-1 text-center text-base whitespace-nowrap">
-                     Unlock Pro – 400 KES
-                   </span>
-                   <img 
-                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/512px-M-PESA_LOGO-01.svg.png" 
-                     alt="M-Pesa" 
-                     className="h-5 flex-shrink-0"
-                   />
+                   <div className="flex items-center justify-center gap-2.5 w-full">
+                     <Crown className="h-5 w-5" />
+                     <span className="whitespace-nowrap">Unlock Pro – 400 KES</span>
+                   </div>
                  </Button>
+                 
+                 {/* Trust Badges Row */}
+                 <div className="flex items-center justify-center gap-3">
+                   <span className="text-xs text-muted-foreground">Pay with</span>
+                   <div className="flex items-center gap-2">
+                     {/* Visa */}
+                     <svg className="h-4 w-auto" viewBox="0 0 48 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                       <rect width="48" height="16" rx="2" fill="hsl(var(--muted))" />
+                       <text x="24" y="11.5" textAnchor="middle" fontSize="8" fontWeight="bold" fill="hsl(var(--primary))">VISA</text>
+                     </svg>
+                     {/* Mastercard */}
+                     <svg className="h-4 w-auto" viewBox="0 0 32 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                       <rect width="32" height="16" rx="2" fill="hsl(var(--muted))" />
+                       <circle cx="13" cy="8" r="5" fill="#EB001B" opacity="0.8" />
+                       <circle cx="19" cy="8" r="5" fill="#F79E1B" opacity="0.8" />
+                     </svg>
+                     {/* M-Pesa */}
+                     <img 
+                       src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/512px-M-PESA_LOGO-01.svg.png" 
+                       alt="M-Pesa" 
+                       className="h-4"
+                       loading="lazy"
+                     />
+                   </div>
+                 </div>
+                 
+                 {/* Reassurance Text */}
                  <p className="text-center text-xs text-primary font-medium">
                    Instant activation after payment
-                 </p>
-                 <p className="text-center text-xs text-muted-foreground">
-                   Pay with M-Pesa • Visa • Mastercard
                  </p>
                </div>
             </motion.div>
