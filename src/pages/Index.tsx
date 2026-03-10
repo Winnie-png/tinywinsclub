@@ -86,7 +86,7 @@ const Index = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="flex gap-3 mt-4"
+          className="flex gap-3 mt-6"
         >
           <Button variant="outline" size="sm" asChild className="rounded-full gap-1">
             <Link to="/stats">
