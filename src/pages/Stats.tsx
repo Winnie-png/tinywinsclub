@@ -70,7 +70,7 @@ export default function Stats() {
         ) : (
           <div className="space-y-6">
             {/* Quick Stats */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-4">
               {stats.map((stat, index) => {
                 const Icon = stat.icon;
                 return (
