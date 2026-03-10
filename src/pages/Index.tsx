@@ -72,10 +72,10 @@ const Index = () => {
           <Button 
             asChild 
             size="lg" 
-            className="rounded-full px-8 gap-2 shadow-lifted btn-bounce text-lg"
+            className="rounded-full px-10 gap-3 shadow-lifted btn-bounce text-lg h-14"
           >
             <Link to="/add">
-              <PlusCircle className="h-5 w-5" />
+              <PlusCircle className="h-6 w-6" strokeWidth={2.5} />
               Add a Tiny Win
             </Link>
           </Button>
@@ -86,7 +86,7 @@ const Index = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="flex gap-3 mt-4"
+          className="flex gap-3 mt-6"
         >
           <Button variant="outline" size="sm" asChild className="rounded-full gap-1">
             <Link to="/stats">
@@ -126,7 +126,7 @@ const Index = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
-            className="mt-6 bg-gradient-to-r from-lavender/40 to-mint/40 rounded-2xl px-4 py-2"
+            className="mt-8 bg-gradient-to-r from-lavender/40 to-mint/40 rounded-3xl px-5 py-3 shadow-soft"
           >
             <p className="text-sm text-foreground">
               <span className="font-medium">{nextMilestone.count - wins.length}</span> more wins to {nextMilestone.emoji}
@@ -140,7 +140,7 @@ const Index = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.65 }}
-            className="mt-6 w-full max-w-sm"
+            className="mt-8 w-full max-w-sm"
           >
             <BadgeDisplay wins={wins} />
           </motion.div>
@@ -151,7 +151,7 @@ const Index = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.7 }}
-          className="mt-8 flex items-center gap-2 text-sm text-muted-foreground"
+          className="mt-10 mb-4 flex items-center gap-2 text-sm text-muted-foreground"
         >
           <Heart className="h-4 w-4 text-destructive/60" />
           <p>

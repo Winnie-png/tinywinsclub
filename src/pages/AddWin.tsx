@@ -176,7 +176,7 @@ export default function AddWin() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0, scale: 0.95, y: -20 }}
-              className="space-y-6"
+              className="space-y-7"
             >
               {/* Text Input */}
               <motion.div 
@@ -184,14 +184,14 @@ export default function AddWin() {
                 whileHover={{ scale: 1.01 }}
                 transition={{ duration: 0.2 }}
               >
-                <label className="block text-sm font-medium text-foreground mb-2">
+                <label className="block text-sm font-bold text-foreground mb-2">
                   Your tiny win
                 </label>
                 <Textarea
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                   placeholder="I made my bed, had a nice coffee, took a short walk..."
-                  className="min-h-[120px] resize-none bg-background/80 border-border/50 rounded-xl text-base focus:ring-2 focus:ring-primary/30 transition-all"
+                  className="min-h-[120px] resize-none bg-background/80 border-2 border-border/50 rounded-2xl text-base focus:ring-2 focus:ring-primary/30 transition-all"
                   maxLength={280}
                 />
                 <p className="text-xs text-muted-foreground text-right mt-2">

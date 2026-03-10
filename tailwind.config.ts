@@ -67,6 +67,7 @@ export default {
         sm: "calc(var(--radius) - 8px)",
         "2xl": "1.5rem",
         "3xl": "2rem",
+        "4xl": "2.5rem",
       },
       boxShadow: {
         soft: "var(--shadow-soft)",

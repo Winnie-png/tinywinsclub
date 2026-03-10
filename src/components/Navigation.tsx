@@ -14,9 +14,9 @@ export function Navigation() {
   const location = useLocation();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-lg border-t border-border shadow-lifted z-40">
+    <nav className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-lg border-t-2 border-border/50 shadow-lifted z-40">
       <div className="container max-w-lg mx-auto">
-        <ul className="flex justify-around items-center py-2">
+        <ul className="flex justify-around items-center py-3">
           {navItems.map(({ path, icon: Icon, label }) => {
             const isActive = location.pathname === path;
             
@@ -24,11 +24,11 @@ export function Navigation() {
               <li key={path}>
                 <Link
                   to={path}
-                  className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
+                  className={`flex flex-col items-center gap-1.5 px-3 py-2 rounded-2xl transition-all duration-200 ${isActive ? "text-primary bg-primary/10 scale-105" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"}`}
                   aria-current={isActive ? "page" : undefined}
                 >
                   <div className="relative">
-                    <Icon className="h-5 w-5" />
+                    <Icon className="h-5 w-5" strokeWidth={isActive ? 2.5 : 2} />
                     {isActive && (
                       <motion.div
                         layoutId="nav-indicator"
@@ -37,7 +37,7 @@ export function Navigation() {
                       />
                     )}
                   </div>
-                  <span className="text-[10px] font-medium">{label}</span>
+                  <span className={`text-[11px] ${isActive ? "font-bold" : "font-medium"}`}>{label}</span>
                 </Link>
               </li>
             );
