@@ -14,9 +14,9 @@ export function Navigation() {
   const location = useLocation();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-lg border-t border-border shadow-lifted z-40">
+    <nav className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-lg border-t-2 border-border/50 shadow-lifted z-40">
       <div className="container max-w-lg mx-auto">
-        <ul className="flex justify-around items-center py-2">
+        <ul className="flex justify-around items-center py-3">
           {navItems.map(({ path, icon: Icon, label }) => {
             const isActive = location.pathname === path;
             
