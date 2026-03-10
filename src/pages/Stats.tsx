@@ -68,7 +68,7 @@ export default function Stats() {
             </Button>
           </motion.div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-8">
             {/* Quick Stats */}
             <div className="grid grid-cols-3 gap-4">
               {stats.map((stat, index) => {
