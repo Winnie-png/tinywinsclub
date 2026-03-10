@@ -97,7 +97,7 @@ export default function Stats() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="card-cozy p-5"
+              className="card-cozy p-6"
             >
               <h3 className="font-display font-bold text-foreground mb-4">
                 All-time Mood Distribution

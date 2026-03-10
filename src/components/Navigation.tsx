@@ -37,7 +37,7 @@ export function Navigation() {
                       />
                     )}
                   </div>
-                  <span className="text-[10px] font-medium">{label}</span>
+                  <span className={`text-[11px] ${isActive ? "font-bold" : "font-medium"}`}>{label}</span>
                 </Link>
               </li>
             );

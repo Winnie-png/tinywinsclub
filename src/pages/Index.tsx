@@ -151,7 +151,7 @@ const Index = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.7 }}
-          className="mt-8 flex items-center gap-2 text-sm text-muted-foreground"
+          className="mt-10 mb-4 flex items-center gap-2 text-sm text-muted-foreground"
         >
           <Heart className="h-4 w-4 text-destructive/60" />
           <p>

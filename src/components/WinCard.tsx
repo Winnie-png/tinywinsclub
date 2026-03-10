@@ -42,7 +42,7 @@ export function WinCard({ win, index, onDelete, onShare }: WinCardProps) {
       {/* Mood Badge */}
       <div className="flex items-start gap-3">
         <motion.div 
-          className={`flex-shrink-0 w-12 h-12 rounded-xl ${theme.accent} flex items-center justify-center shadow-md ${theme.glow}`}
+          className={`flex-shrink-0 w-13 h-13 rounded-2xl ${theme.accent} flex items-center justify-center shadow-md ${theme.glow}`}
           whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
           transition={{ duration: 0.4 }}
         >

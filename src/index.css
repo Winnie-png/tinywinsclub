@@ -125,7 +125,7 @@
   }
 
   .card-cozy {
-    @apply bg-card rounded-2xl shadow-soft border border-border/50 transition-all duration-300;
+    @apply bg-card rounded-3xl shadow-soft border-2 border-border/40 transition-all duration-300 p-1;
   }
 
   .card-cozy:hover {
@@ -133,13 +133,13 @@
   }
 
   .shadow-soft {
-    box-shadow: 0 4px 20px -4px hsl(25 30% 20% / 0.1), 
+    box-shadow: 0 6px 24px -4px hsl(25 30% 20% / 0.12), 
                 0 2px 8px -2px hsl(25 30% 20% / 0.06);
   }
 
   .shadow-lifted {
-    box-shadow: 0 12px 40px -8px hsl(25 30% 20% / 0.15), 
-                0 4px 16px -4px hsl(25 30% 20% / 0.1);
+    box-shadow: 0 14px 44px -8px hsl(25 30% 20% / 0.18), 
+                0 6px 18px -4px hsl(25 30% 20% / 0.1);
   }
 
   .gradient-warm {
