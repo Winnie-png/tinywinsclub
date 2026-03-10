@@ -37,7 +37,7 @@ export function WinCard({ win, index, onDelete, onShare }: WinCardProps) {
         y: -4,
         transition: { duration: 0.2 }
       }}
-      className={`relative p-4 rounded-2xl bg-gradient-to-br ${theme.bg} border border-border/30 shadow-soft hover:shadow-lifted transition-all duration-300 group`}
+      className={`relative p-5 rounded-3xl bg-gradient-to-br ${theme.bg} border-2 border-border/30 shadow-soft hover:shadow-lifted transition-all duration-300 group`}
     >
       {/* Mood Badge */}
       <div className="flex items-start gap-3">
