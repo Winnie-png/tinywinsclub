@@ -72,10 +72,10 @@ const Index = () => {
           <Button 
             asChild 
             size="lg" 
-            className="rounded-full px-8 gap-2 shadow-lifted btn-bounce text-lg"
+            className="rounded-full px-10 gap-3 shadow-lifted btn-bounce text-lg h-14"
           >
             <Link to="/add">
-              <PlusCircle className="h-5 w-5" />
+              <PlusCircle className="h-6 w-6" strokeWidth={2.5} />
               Add a Tiny Win
             </Link>
           </Button>
