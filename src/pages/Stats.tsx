@@ -79,7 +79,7 @@ export default function Stats() {
                     initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: index * 0.1 }}
-                    className={`bg-gradient-to-br ${stat.color} rounded-2xl p-4 text-center`}
+                    className={`bg-gradient-to-br ${stat.color} rounded-3xl p-5 text-center shadow-soft border-2 border-border/20`}
                   >
                     <Icon className="h-5 w-5 mx-auto mb-2 text-foreground/70" />
                     <p className="text-xl font-bold text-foreground">{stat.value}</p>
