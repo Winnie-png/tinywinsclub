@@ -176,7 +176,7 @@ export default function AddWin() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0, scale: 0.95, y: -20 }}
-              className="space-y-6"
+              className="space-y-7"
             >
               {/* Text Input */}
               <motion.div 
