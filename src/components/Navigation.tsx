@@ -28,7 +28,7 @@ export function Navigation() {
                   aria-current={isActive ? "page" : undefined}
                 >
                   <div className="relative">
-                    <Icon className="h-5 w-5" />
+                    <Icon className="h-5 w-5" strokeWidth={isActive ? 2.5 : 2} />
                     {isActive && (
                       <motion.div
                         layoutId="nav-indicator"
