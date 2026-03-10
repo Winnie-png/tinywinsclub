@@ -140,7 +140,7 @@ const Index = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.65 }}
-            className="mt-6 w-full max-w-sm"
+            className="mt-8 w-full max-w-sm"
           >
             <BadgeDisplay wins={wins} />
           </motion.div>
