@@ -126,7 +126,7 @@ const Index = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
-            className="mt-6 bg-gradient-to-r from-lavender/40 to-mint/40 rounded-2xl px-4 py-2"
+            className="mt-8 bg-gradient-to-r from-lavender/40 to-mint/40 rounded-3xl px-5 py-3 shadow-soft"
           >
             <p className="text-sm text-foreground">
               <span className="font-medium">{nextMilestone.count - wins.length}</span> more wins to {nextMilestone.emoji}
