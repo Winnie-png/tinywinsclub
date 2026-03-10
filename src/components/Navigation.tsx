@@ -24,7 +24,7 @@ export function Navigation() {
               <li key={path}>
                 <Link
                   to={path}
-                  className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
+                  className={`flex flex-col items-center gap-1.5 px-3 py-2 rounded-2xl transition-all duration-200 ${isActive ? "text-primary bg-primary/10 scale-105" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"}`}
                   aria-current={isActive ? "page" : undefined}
                 >
                   <div className="relative">
