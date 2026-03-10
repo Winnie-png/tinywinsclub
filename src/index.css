@@ -52,8 +52,8 @@
     --peach: 20 80% 90%;
     --sky: 200 60% 90%;
 
-    --shadow-soft: 0 4px 20px -4px hsl(25 30% 20% / 0.08);
-    --shadow-lifted: 0 8px 30px -6px hsl(25 30% 20% / 0.12);
+    --shadow-soft: 0 6px 24px -4px hsl(25 30% 20% / 0.12), 0 2px 8px -2px hsl(25 30% 20% / 0.06);
+    --shadow-lifted: 0 14px 44px -8px hsl(25 30% 20% / 0.18), 0 6px 18px -4px hsl(25 30% 20% / 0.1);
   }
 
   .dark {
