@@ -111,6 +111,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         session,
         loading,
         isPro,
+        proExpiresAt,
         signUp,
         signIn,
         signOut,
