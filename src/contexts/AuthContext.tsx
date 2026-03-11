@@ -7,6 +7,7 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   isPro: boolean;
+  proExpiresAt: string | null;
   signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -20,6 +21,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isPro, setIsPro] = useState(false);
+  const [proExpiresAt, setProExpiresAt] = useState<string | null>(null);
 
   const fetchProfile = async (userId: string) => {
     const { data } = await supabase
@@ -28,8 +30,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .eq("user_id", userId)
       .maybeSingle();
     
+    setProExpiresAt(data?.pro_expires_at ?? null);
     if (data?.is_pro && data?.pro_expires_at) {
-      // Check if pro has expired
       const expiresAt = new Date(data.pro_expires_at);
       setIsPro(expiresAt > new Date());
     } else {
@@ -55,6 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setTimeout(() => fetchProfile(session.user.id), 0);
         } else {
           setIsPro(false);
+          setProExpiresAt(null);
         }
         
         setLoading(false);
@@ -98,6 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = async () => {
     await supabase.auth.signOut();
     setIsPro(false);
+    setProExpiresAt(null);
   };
 
   return (
@@ -107,6 +111,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         session,
         loading,
         isPro,
+        proExpiresAt,
         signUp,
         signIn,
         signOut,
