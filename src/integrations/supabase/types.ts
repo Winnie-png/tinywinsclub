@@ -35,11 +35,45 @@ export type Database = {
         }
         Relationships: []
       }
+      pro_audit_log: {
+        Row: {
+          action: string
+          amount_kobo: number | null
+          created_at: string
+          id: string
+          new_expires_at: string | null
+          old_expires_at: string | null
+          payment_reference: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          amount_kobo?: number | null
+          created_at?: string
+          id?: string
+          new_expires_at?: string | null
+          old_expires_at?: string | null
+          payment_reference?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          amount_kobo?: number | null
+          created_at?: string
+          id?: string
+          new_expires_at?: string | null
+          old_expires_at?: string | null
+          payment_reference?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
           id: string
           is_pro: boolean
+          pro_expires_at: string | null
           updated_at: string
           user_id: string
         }
@@ -47,6 +81,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_pro?: boolean
+          pro_expires_at?: string | null
           updated_at?: string
           user_id: string
         }
@@ -54,6 +89,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_pro?: boolean
+          pro_expires_at?: string | null
           updated_at?: string
           user_id?: string
         }
