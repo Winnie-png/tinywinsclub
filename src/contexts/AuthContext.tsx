@@ -30,8 +30,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .eq("user_id", userId)
       .maybeSingle();
     
+    setProExpiresAt(data?.pro_expires_at ?? null);
     if (data?.is_pro && data?.pro_expires_at) {
-      // Check if pro has expired
       const expiresAt = new Date(data.pro_expires_at);
       setIsPro(expiresAt > new Date());
     } else {
