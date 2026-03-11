@@ -57,6 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setTimeout(() => fetchProfile(session.user.id), 0);
         } else {
           setIsPro(false);
+          setProExpiresAt(null);
         }
         
         setLoading(false);
