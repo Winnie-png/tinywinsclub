@@ -6,14 +6,20 @@ import { BadgeDisplay } from "@/components/BadgeDisplay";
 import { Button } from "@/components/ui/button";
 import { useWins } from "@/hooks/useWins";
 import { getNextMilestone } from "@/lib/milestones";
-import { PlusCircle, Sparkles, Heart, TrendingUp, Crown, Loader2 } from "lucide-react";
+import { PlusCircle, Sparkles, Heart, TrendingUp, Crown, Loader2, AlertTriangle } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Index = () => {
   const { wins, loading } = useWins();
   const { theme } = useTheme();
-  const { isPro } = useAuth();
+  const { isPro, proExpiresAt } = useAuth();
+
+  const daysLeft = proExpiresAt
+    ? Math.max(0, Math.ceil((new Date(proExpiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+    : null;
+  const showExpiryWarning = isPro && daysLeft !== null && daysLeft <= 3;
 
   const nextMilestone = getNextMilestone(wins.length);
 
@@ -30,6 +36,26 @@ const Index = () => {
   return (
     <Layout>
       <div className={`flex flex-col items-center text-center pt-4 page-enter min-h-screen bg-gradient-to-br ${theme.bg} transition-colors duration-500`}>
+      {showExpiryWarning && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="w-full mb-4"
+          >
+            <Alert className="border-amber-500/50 bg-amber-500/10">
+              <AlertTriangle className="h-4 w-4 text-amber-500" />
+              <AlertDescription className="text-sm text-foreground">
+                {daysLeft === 0
+                  ? "Pro expires today!"
+                  : `Pro expires in ${daysLeft} day${daysLeft === 1 ? "" : "s"}.`}
+                <Link to="/profile" className="ml-1 text-amber-500 font-semibold underline">
+                  Renew
+                </Link>
+              </AlertDescription>
+            </Alert>
+          </motion.div>
+        )}
+
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
