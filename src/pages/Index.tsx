@@ -6,14 +6,20 @@ import { BadgeDisplay } from "@/components/BadgeDisplay";
 import { Button } from "@/components/ui/button";
 import { useWins } from "@/hooks/useWins";
 import { getNextMilestone } from "@/lib/milestones";
-import { PlusCircle, Sparkles, Heart, TrendingUp, Crown, Loader2 } from "lucide-react";
+import { PlusCircle, Sparkles, Heart, TrendingUp, Crown, Loader2, AlertTriangle } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Index = () => {
   const { wins, loading } = useWins();
   const { theme } = useTheme();
-  const { isPro } = useAuth();
+  const { isPro, proExpiresAt } = useAuth();
+
+  const daysLeft = proExpiresAt
+    ? Math.max(0, Math.ceil((new Date(proExpiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+    : null;
+  const showExpiryWarning = isPro && daysLeft !== null && daysLeft <= 3;
 
   const nextMilestone = getNextMilestone(wins.length);
 
