@@ -36,6 +36,26 @@ const Index = () => {
   return (
     <Layout>
       <div className={`flex flex-col items-center text-center pt-4 page-enter min-h-screen bg-gradient-to-br ${theme.bg} transition-colors duration-500`}>
+      {showExpiryWarning && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="w-full mb-4"
+          >
+            <Alert className="border-amber-500/50 bg-amber-500/10">
+              <AlertTriangle className="h-4 w-4 text-amber-500" />
+              <AlertDescription className="text-sm text-foreground">
+                {daysLeft === 0
+                  ? "Pro expires today!"
+                  : `Pro expires in ${daysLeft} day${daysLeft === 1 ? "" : "s"}.`}
+                <Link to="/profile" className="ml-1 text-amber-500 font-semibold underline">
+                  Renew
+                </Link>
+              </AlertDescription>
+            </Alert>
+          </motion.div>
+        )}
+
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
