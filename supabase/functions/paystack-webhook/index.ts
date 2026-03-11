@@ -83,9 +83,37 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
+    // Fetch current profile to determine extend vs new
+    const { data: profile, error: fetchError } = await supabase
+      .from("profiles")
+      .select("is_pro, pro_expires_at")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (fetchError) {
+      console.error("Error fetching profile:", fetchError);
+      return new Response("Database error", { status: 500, headers: corsHeaders });
+    }
+
+    const now = new Date();
+    const thirtyDays = 30 * 24 * 60 * 60 * 1000;
+    let newExpiresAt: Date;
+
+    if (profile?.is_pro && profile?.pro_expires_at) {
+      // Already Pro: extend from current expiration
+      const currentExpiry = new Date(profile.pro_expires_at);
+      const baseDate = currentExpiry > now ? currentExpiry : now;
+      newExpiresAt = new Date(baseDate.getTime() + thirtyDays);
+    } else {
+      // New Pro: start from now
+      newExpiresAt = new Date(now.getTime() + thirtyDays);
+    }
+
+    const oldExpiresAt = profile?.pro_expires_at || null;
+
     const { error } = await supabase
       .from("profiles")
-      .update({ is_pro: true })
+      .update({ is_pro: true, pro_expires_at: newExpiresAt.toISOString() })
       .eq("user_id", userId);
 
     if (error) {
@@ -93,7 +121,23 @@ Deno.serve(async (req) => {
       return new Response("Database error", { status: 500, headers: corsHeaders });
     }
 
-    console.log(`Successfully upgraded user ${userId} to Pro (amount: ${paidAmount} kobo)`);
+    // Audit log
+    const { error: auditError } = await supabase
+      .from("pro_audit_log")
+      .insert({
+        user_id: userId,
+        action: oldExpiresAt ? "extend_pro" : "activate_pro",
+        old_expires_at: oldExpiresAt,
+        new_expires_at: newExpiresAt.toISOString(),
+        payment_reference: event.data?.reference || null,
+        amount_kobo: paidAmount,
+      });
+
+    if (auditError) {
+      console.error("Audit log error (non-fatal):", auditError);
+    }
+
+    console.log(`Successfully upgraded user ${userId} to Pro. Expires: ${newExpiresAt.toISOString()} (amount: ${paidAmount} kobo)`);
   } else {
     console.log(`Ignoring unhandled event type: ${event.event}`);
   }

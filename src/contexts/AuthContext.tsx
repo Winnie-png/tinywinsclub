@@ -24,11 +24,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const fetchProfile = async (userId: string) => {
     const { data } = await supabase
       .from("profiles")
-      .select("is_pro")
+      .select("is_pro, pro_expires_at")
       .eq("user_id", userId)
       .maybeSingle();
     
-    setIsPro(data?.is_pro ?? false);
+    if (data?.is_pro && data?.pro_expires_at) {
+      // Check if pro has expired
+      const expiresAt = new Date(data.pro_expires_at);
+      setIsPro(expiresAt > new Date());
+    } else {
+      setIsPro(data?.is_pro ?? false);
+    }
   };
 
   const refreshProfile = async () => {
