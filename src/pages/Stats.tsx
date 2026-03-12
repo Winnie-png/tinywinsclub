@@ -1,23 +1,39 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
 import { WeeklyStats } from "@/components/WeeklyStats";
+import { StreakDisplay } from "@/components/StreakDisplay";
+import { AnimatedCounter } from "@/components/AnimatedCounter";
+import { Confetti } from "@/components/Confetti";
 import { useWins } from "@/hooks/useWins";
+import { useAuth } from "@/contexts/AuthContext";
 import { getMoodDistribution } from "@/lib/analytics";
 import { calculateStreak } from "@/lib/badges";
-import { TrendingUp, Flame, Award, Calendar, Loader2 } from "lucide-react";
+import { TrendingUp, Flame, Award, Calendar, Loader2, Crown, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
+const FREE_WIN_LIMIT = 10;
+
 export default function Stats() {
   const { wins, loading } = useWins();
+  const { isPro } = useAuth();
+  const [showConfetti, setShowConfetti] = useState(false);
 
   const moodDist = getMoodDistribution(wins);
   const streak = calculateStreak(wins);
+  const hasReachedLimit = !isPro && wins.length >= FREE_WIN_LIMIT;
+
+  // Trigger celebration confetti for milestones
+  const celebrateMilestone = () => {
+    setShowConfetti(true);
+    setTimeout(() => setShowConfetti(false), 100);
+  };
 
   const stats = [
-    { label: "Total Wins", value: wins.length, icon: Award, color: "from-lavender to-lavender/50" },
-    { label: "Current Streak", value: `${streak} days`, icon: Flame, color: "from-peach to-peach/50" },
-    { label: "Unique Moods", value: moodDist.length, icon: TrendingUp, color: "from-mint to-mint/50" },
+    { label: "Total Wins", value: wins.length, icon: Award, color: "from-lavender to-lavender/50", suffix: "" },
+    { label: "Current Streak", value: streak, icon: Flame, color: "from-peach to-peach/50", suffix: " days" },
+    { label: "Unique Moods", value: moodDist.length, icon: TrendingUp, color: "from-mint to-mint/50", suffix: "" },
   ];
 
   if (loading) {
@@ -32,6 +48,7 @@ export default function Stats() {
 
   return (
     <Layout>
+      <Confetti trigger={showConfetti} intensity="medium" />
       <div className="pt-2 page-enter">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -68,8 +85,18 @@ export default function Stats() {
             </Button>
           </motion.div>
         ) : (
-          <div className="space-y-8">
-            {/* Quick Stats */}
+          <div className="space-y-6">
+            {/* Streak Display */}
+            {streak > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <StreakDisplay streak={streak} isPro={isPro} />
+              </motion.div>
+            )}
+
+            {/* Quick Stats with animated counters */}
             <div className="grid grid-cols-3 gap-4">
               {stats.map((stat, index) => {
                 const Icon = stat.icon;
@@ -80,14 +107,60 @@ export default function Stats() {
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: index * 0.1 }}
                     className={`bg-gradient-to-br ${stat.color} rounded-3xl p-5 text-center shadow-soft border-2 border-border/20`}
+                    onClick={stat.label === "Total Wins" && wins.length >= 10 ? celebrateMilestone : undefined}
                   >
                     <Icon className="h-5 w-5 mx-auto mb-2 text-foreground/70" />
-                    <p className="text-xl font-bold text-foreground">{stat.value}</p>
+                    <div className="text-xl font-bold text-foreground">
+                      {stat.suffix === " days" ? (
+                        <><AnimatedCounter value={stat.value} />{stat.suffix}</>
+                      ) : (
+                        <AnimatedCounter value={stat.value} suffix={stat.suffix} />
+                      )}
+                    </div>
                     <p className="text-xs text-muted-foreground">{stat.label}</p>
                   </motion.div>
                 );
               })}
             </div>
+
+            {/* Motivational banner */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="bg-gradient-to-r from-lavender/30 to-mint/30 rounded-2xl px-5 py-3 text-center"
+            >
+              <div className="flex items-center justify-center gap-2 text-sm text-foreground font-medium">
+                <Sparkles className="h-4 w-4 text-primary" />
+                {hasReachedLimit
+                  ? "You've hit your free limit! Upgrade to track unlimited stats 🚀"
+                  : streak >= 7
+                  ? `${streak} days strong! You're building an incredible habit! 💪`
+                  : wins.length >= 25
+                  ? "Look at that progress! You're on fire! 🔥"
+                  : "Small wins create big momentum! Keep going! ✨"
+                }
+              </div>
+            </motion.div>
+
+            {/* Upgrade CTA for free users at limit */}
+            {hasReachedLimit && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.4 }}
+              >
+                <Button
+                  asChild
+                  className="w-full h-12 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white border-0 font-display font-semibold"
+                >
+                  <Link to="/pricing">
+                    <Crown className="h-5 w-5 mr-2" />
+                    Unlock Unlimited Stats – $6/month
+                  </Link>
+                </Button>
+              </motion.div>
+            )}
 
             {/* Weekly Stats Component */}
             <WeeklyStats wins={wins} />

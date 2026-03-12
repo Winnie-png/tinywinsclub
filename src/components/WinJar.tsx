@@ -5,6 +5,7 @@ import type { Win } from "@/hooks/useWins";
 interface WinJarProps {
   wins: Win[];
   maxWins?: number;
+  isLocked?: boolean;
 }
 
 interface Sparkle {
@@ -15,22 +16,22 @@ interface Sparkle {
   delay: number;
 }
 
-export function WinJar({ wins, maxWins = 25 }: WinJarProps) {
+export function WinJar({ wins, maxWins = 25, isLocked = false }: WinJarProps) {
   const fillPercentage = Math.min((wins.length / maxWins) * 100, 100);
   const [isOpen, setIsOpen] = useState(false);
   const [sparkles, setSparkles] = useState<Sparkle[]>([]);
   const [floatingStar, setFloatingStar] = useState(false);
 
   const handleTap = useCallback(() => {
-    if (isOpen) return;
+    if (isOpen || isLocked) return;
     setIsOpen(true);
 
-    const newSparkles: Sparkle[] = Array.from({ length: 6 }, (_, i) => ({
+    const newSparkles: Sparkle[] = Array.from({ length: 8 }, (_, i) => ({
       id: Date.now() + i,
-      x: (Math.random() - 0.5) * 70,
-      y: -20 + (Math.random() - 0.5) * 30,
-      size: 4 + Math.random() * 6,
-      delay: i * 0.04,
+      x: (Math.random() - 0.5) * 80,
+      y: -20 + (Math.random() - 0.5) * 40,
+      size: 4 + Math.random() * 8,
+      delay: i * 0.03,
     }));
     setSparkles(newSparkles);
     setFloatingStar(true);
@@ -39,13 +40,37 @@ export function WinJar({ wins, maxWins = 25 }: WinJarProps) {
       setIsOpen(false);
       setFloatingStar(false);
       setTimeout(() => setSparkles([]), 400);
-    }, 500);
-  }, [isOpen]);
+    }, 600);
+  }, [isOpen, isLocked]);
 
   return (
     <div className="relative flex flex-col items-center">
+      {/* Pulsing glow behind jar when locked */}
+      {isLocked && (
+        <motion.div
+          className="absolute z-0 rounded-full"
+          style={{
+            width: 200,
+            height: 200,
+            top: 50,
+            left: "50%",
+            marginLeft: -100,
+            background: "radial-gradient(circle, hsl(40 90% 55% / 0.25) 0%, transparent 70%)",
+          }}
+          animate={{
+            scale: [1, 1.15, 1],
+            opacity: [0.5, 0.8, 0.5],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      )}
+
       {/* Ambient sparkles around jar */}
-      {wins.length > 0 && (
+      {wins.length > 0 && !isLocked && (
         <>
           {[...Array(4)].map((_, i) => (
             <motion.div
@@ -76,10 +101,11 @@ export function WinJar({ wins, maxWins = 25 }: WinJarProps) {
       )}
 
       <motion.div
-        className="relative w-56 h-64 cursor-pointer select-none"
-        whileTap={{ scale: 0.94 }}
+        className={`relative w-56 h-64 select-none ${isLocked ? "cursor-not-allowed" : "cursor-pointer"}`}
+        whileTap={isLocked ? {} : { scale: 0.94 }}
         transition={{ type: "spring", stiffness: 400, damping: 15 }}
         onTap={handleTap}
+        style={isLocked ? { filter: "saturate(0.4) brightness(0.85)" } : {}}
       >
         {/* Sparkle burst on tap */}
         <AnimatePresence>
@@ -145,7 +171,6 @@ export function WinJar({ wins, maxWins = 25 }: WinJarProps) {
               boxShadow: "0 4px 12px -2px hsl(30 60% 30% / 0.3), inset 0 2px 4px hsl(50 90% 80% / 0.5), inset 0 -1px 3px hsl(30 70% 30% / 0.2)",
             }}
           >
-            {/* Lid highlight stripe */}
             <div
               className="absolute rounded-full"
               style={{
@@ -157,7 +182,6 @@ export function WinJar({ wins, maxWins = 25 }: WinJarProps) {
                 borderRadius: "50%",
               }}
             />
-            {/* Lid secondary highlight */}
             <div
               className="absolute rounded-full"
               style={{
@@ -171,7 +195,7 @@ export function WinJar({ wins, maxWins = 25 }: WinJarProps) {
           </div>
         </motion.div>
 
-        {/* Jar Neck (narrow top) */}
+        {/* Jar Neck */}
         <div
           className="absolute z-[5]"
           style={{
@@ -187,7 +211,7 @@ export function WinJar({ wins, maxWins = 25 }: WinJarProps) {
           }}
         />
 
-        {/* Jar Body — round bulbous shape */}
+        {/* Jar Body */}
         <div
           className="absolute left-1/2 -translate-x-1/2 overflow-hidden"
           style={{
@@ -205,7 +229,7 @@ export function WinJar({ wins, maxWins = 25 }: WinJarProps) {
             `,
           }}
         >
-          {/* Golden glow fill from stars */}
+          {/* Golden glow fill */}
           <motion.div
             className="absolute bottom-0 left-0 right-0"
             initial={{ height: 0 }}
@@ -216,7 +240,6 @@ export function WinJar({ wins, maxWins = 25 }: WinJarProps) {
               borderRadius: "0 0 45% 45% / 0 0 50% 50%",
             }}
           >
-            {/* Inner sparkle dots */}
             {[...Array(8)].map((_, i) => (
               <motion.div
                 key={i}
@@ -243,7 +266,7 @@ export function WinJar({ wins, maxWins = 25 }: WinJarProps) {
             ))}
           </motion.div>
 
-          {/* Floating golden star emojis inside */}
+          {/* Floating stars inside */}
           <div className="absolute inset-0 flex flex-wrap content-end justify-center gap-1 p-3 pb-5">
             {wins.slice(0, 14).map((win, index) => (
               <motion.span
@@ -285,46 +308,29 @@ export function WinJar({ wins, maxWins = 25 }: WinJarProps) {
             ))}
           </div>
 
-          {/* Glass shine — left */}
-          <div
-            className="absolute pointer-events-none"
-            style={{
-              top: "12%",
-              left: "8%",
-              width: 14,
-              height: "45%",
-              borderRadius: "50%",
-              background: "linear-gradient(180deg, hsl(0 0% 100% / 0.55) 0%, hsl(0 0% 100% / 0.1) 100%)",
-              filter: "blur(3px)",
-            }}
-          />
-          {/* Glass shine — smaller left */}
-          <div
-            className="absolute pointer-events-none"
-            style={{
-              top: "30%",
-              left: "16%",
-              width: 7,
-              height: "20%",
-              borderRadius: "50%",
-              background: "hsl(0 0% 100% / 0.4)",
-              filter: "blur(2px)",
-            }}
-          />
-          {/* Glass shine — right subtle */}
-          <div
-            className="absolute pointer-events-none"
-            style={{
-              top: "15%",
-              right: "10%",
-              width: 8,
-              height: "30%",
-              borderRadius: "50%",
-              background: "linear-gradient(180deg, hsl(0 0% 100% / 0.3) 0%, transparent 100%)",
-              filter: "blur(2px)",
-            }}
-          />
+          {/* Glass shines */}
+          <div className="absolute pointer-events-none" style={{ top: "12%", left: "8%", width: 14, height: "45%", borderRadius: "50%", background: "linear-gradient(180deg, hsl(0 0% 100% / 0.55) 0%, hsl(0 0% 100% / 0.1) 100%)", filter: "blur(3px)" }} />
+          <div className="absolute pointer-events-none" style={{ top: "30%", left: "16%", width: 7, height: "20%", borderRadius: "50%", background: "hsl(0 0% 100% / 0.4)", filter: "blur(2px)" }} />
+          <div className="absolute pointer-events-none" style={{ top: "15%", right: "10%", width: 8, height: "30%", borderRadius: "50%", background: "linear-gradient(180deg, hsl(0 0% 100% / 0.3) 0%, transparent 100%)", filter: "blur(2px)" }} />
         </div>
+
+        {/* Lock overlay when locked */}
+        {isLocked && (
+          <motion.div
+            className="absolute z-20 inset-0 flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          >
+            <motion.div
+              className="bg-background/80 backdrop-blur-sm rounded-full p-3 shadow-lg border border-border/50"
+              animate={{ scale: [1, 1.08, 1] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <span className="text-2xl">🔒</span>
+            </motion.div>
+          </motion.div>
+        )}
 
         {/* Shadow under jar */}
         <div
@@ -352,8 +358,8 @@ export function WinJar({ wins, maxWins = 25 }: WinJarProps) {
         <motion.p
           className="text-3xl font-display font-bold text-foreground"
           key={wins.length}
-          initial={{ scale: 1.2 }}
-          animate={{ scale: 1 }}
+          initial={{ scale: 1.3, color: "hsl(40 90% 55%)" }}
+          animate={{ scale: 1, color: "hsl(var(--foreground))" }}
           transition={{ type: "spring", stiffness: 300 }}
         >
           {wins.length}
@@ -361,7 +367,9 @@ export function WinJar({ wins, maxWins = 25 }: WinJarProps) {
         <p className="text-sm text-muted-foreground font-medium">
           {wins.length === 1 ? "tiny win" : "tiny wins"} collected
         </p>
-        <p className="text-xs text-muted-foreground/60 mt-1">tap the jar ✨</p>
+        {!isLocked && (
+          <p className="text-xs text-muted-foreground/60 mt-1">tap the jar ✨</p>
+        )}
       </motion.div>
     </div>
   );
