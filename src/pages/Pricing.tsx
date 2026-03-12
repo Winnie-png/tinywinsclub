@@ -173,7 +173,7 @@ export default function Pricing() {
                     <Crown className="h-5 w-5 flex-shrink-0" />
                   )}
                   <span className="text-[15px] sm:text-base font-semibold whitespace-nowrap">
-                    Unlock Pro – 30 Days • 400 KES
+                    Unlock Pro – $6/month
                   </span>
                 </div>
               </Button>

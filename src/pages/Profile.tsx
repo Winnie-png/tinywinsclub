@@ -151,7 +151,7 @@ export default function Profile() {
                  >
                    <div className="flex items-center justify-center gap-2.5 w-full">
                      <Crown className="h-5 w-5" />
-                     <span className="whitespace-nowrap">Unlock Pro – 400 KES</span>
+                     <span className="whitespace-nowrap">Unlock Pro – $6/month</span>
                    </div>
                  </Button>
                  
