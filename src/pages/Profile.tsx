@@ -141,7 +141,7 @@ export default function Profile() {
                 </h3>
               </div>
               <p className="text-sm text-muted-foreground mb-4">
-                Get unlimited wins, jars, insights, and more for just 400 KES/month
+                Get unlimited wins, jars, insights, and more for just $6/month
               </p>
               
                <div className="space-y-3">
