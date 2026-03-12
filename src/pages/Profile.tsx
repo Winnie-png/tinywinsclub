@@ -141,7 +141,7 @@ export default function Profile() {
                 </h3>
               </div>
               <p className="text-sm text-muted-foreground mb-4">
-                Get unlimited wins, jars, insights, and more for just 400 KES/month
+                Get unlimited wins, jars, insights, and more for just $6/month
               </p>
               
                <div className="space-y-3">
@@ -151,7 +151,7 @@ export default function Profile() {
                  >
                    <div className="flex items-center justify-center gap-2.5 w-full">
                      <Crown className="h-5 w-5" />
-                     <span className="whitespace-nowrap">Unlock Pro – 400 KES</span>
+                     <span className="whitespace-nowrap">Unlock Pro – $6/month</span>
                    </div>
                  </Button>
                  

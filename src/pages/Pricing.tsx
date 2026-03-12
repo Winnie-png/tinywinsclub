@@ -122,8 +122,8 @@ export default function Pricing() {
           
           <div className="relative">
             <div className="flex flex-col items-center gap-1 mb-6">
-              <span className="text-3xl font-display font-bold text-foreground">400 KES</span>
-              <span className="text-muted-foreground">≈ $3.00 USD • 30 days of Pro</span>
+              <span className="text-3xl font-display font-bold text-foreground">$6/month</span>
+              <span className="text-muted-foreground">≈ 780 KES • 30 days of Pro</span>
             </div>
 
             {/* Benefits List */}
@@ -173,7 +173,7 @@ export default function Pricing() {
                     <Crown className="h-5 w-5 flex-shrink-0" />
                   )}
                   <span className="text-[15px] sm:text-base font-semibold whitespace-nowrap">
-                    Unlock Pro – 30 Days • 400 KES
+                    Unlock Pro – $6/month
                   </span>
                 </div>
               </Button>

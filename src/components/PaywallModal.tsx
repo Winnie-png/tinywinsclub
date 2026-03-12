@@ -125,7 +125,7 @@ export function PaywallModal({
                     className="w-full h-12 text-base font-display font-semibold rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg"
                   >
                     <Crown className="h-5 w-5 mr-2" />
-                    Upgrade to Pro
+                    Upgrade to Pro – $6/month
                   </Button>
                   <Button
                     variant="ghost"
