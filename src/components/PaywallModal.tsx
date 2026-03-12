@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Crown, Sparkles, Lock } from "lucide-react";
+import { Crown, Sparkles, Lock, Flame, Trophy, Zap } from "lucide-react";
 
 interface PaywallModalProps {
   isOpen: boolean;
@@ -13,8 +13,8 @@ interface PaywallModalProps {
 export function PaywallModal({ 
   isOpen, 
   onClose, 
-  title = "Your jar is full!",
-  message = "Upgrade to Pro to keep collecting your victories."
+  title = "🎉 You've reached your free Tiny Wins limit!",
+  message = "Unlock Pro for unlimited wins, streaks & badges."
 }: PaywallModalProps) {
   const navigate = useNavigate();
 
@@ -38,28 +38,42 @@ export function PaywallModal({
           
           {/* Modal */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.85, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            exit={{ opacity: 0, scale: 0.85, y: 30 }}
+            transition={{ type: "spring", stiffness: 300, damping: 22 }}
             className="fixed inset-x-4 top-1/2 -translate-y-1/2 z-50 max-w-sm mx-auto"
           >
             <div className="bg-background rounded-3xl p-6 shadow-2xl border border-border/50 overflow-hidden relative">
-              {/* Decorative gradient */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-amber-500/20 to-transparent rounded-full -translate-y-1/2 translate-x-1/2" />
-              <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-orange-500/20 to-transparent rounded-full translate-y-1/2 -translate-x-1/2" />
+              {/* Animated glow background */}
+              <motion.div
+                className="absolute top-0 right-0 w-40 h-40 rounded-full -translate-y-1/2 translate-x-1/2"
+                style={{ background: "radial-gradient(circle, hsl(40 90% 55% / 0.3), transparent 70%)" }}
+                animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <motion.div
+                className="absolute bottom-0 left-0 w-32 h-32 rounded-full translate-y-1/2 -translate-x-1/2"
+                style={{ background: "radial-gradient(circle, hsl(25 90% 55% / 0.2), transparent 70%)" }}
+                animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.7, 0.4] }}
+                transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+              />
               
               <div className="relative">
-                {/* Icon */}
+                {/* Animated crown icon */}
                 <motion.div
                   initial={{ scale: 0, rotate: -180 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ type: "spring", stiffness: 200, delay: 0.1 }}
                   className="flex justify-center mb-4"
                 >
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center">
-                    <Crown className="h-8 w-8 text-amber-500" />
-                  </div>
+                  <motion.div
+                    className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center"
+                    animate={{ boxShadow: ["0 0 20px hsl(40 90% 55% / 0.2)", "0 0 40px hsl(40 90% 55% / 0.4)", "0 0 20px hsl(40 90% 55% / 0.2)"] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    <Crown className="h-10 w-10 text-amber-500" />
+                  </motion.div>
                 </motion.div>
 
                 {/* Lock indicator */}
@@ -95,38 +109,50 @@ export function PaywallModal({
                   {message}
                 </motion.p>
 
-                {/* Features preview */}
+                {/* Pro features with icons */}
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="bg-muted/50 rounded-2xl p-4 mb-6"
+                  className="bg-muted/50 rounded-2xl p-4 mb-6 space-y-2"
                 >
-                  <p className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
+                  <p className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
                     <Sparkles className="h-4 w-4 text-primary" />
-                    Pro members get:
+                    Pro members unlock:
                   </p>
-                  <ul className="space-y-1 text-sm text-muted-foreground">
-                    <li>✓ Unlimited tiny wins storage</li>
-                    <li>✓ Advanced progress tracking</li>
-                    <li>✓ Personalized insights</li>
-                  </ul>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Zap className="h-4 w-4 text-amber-500 flex-shrink-0" />
+                    <span>Unlimited tiny wins storage</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Flame className="h-4 w-4 text-orange-500 flex-shrink-0" />
+                    <span>Unlimited streak tracking</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Trophy className="h-4 w-4 text-amber-600 flex-shrink-0" />
+                    <span>All badges & celebrations</span>
+                  </div>
                 </motion.div>
 
-                {/* Buttons */}
+                {/* Bouncing upgrade button */}
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.35 }}
                   className="space-y-3"
                 >
-                  <Button
-                    onClick={handleUpgrade}
-                    className="w-full h-12 text-base font-display font-semibold rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg"
+                  <motion.div
+                    animate={{ y: [0, -4, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
                   >
-                    <Crown className="h-5 w-5 mr-2" />
-                    Upgrade to Pro – $6/month
-                  </Button>
+                    <Button
+                      onClick={handleUpgrade}
+                      className="w-full h-14 text-base font-display font-bold rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg active:scale-95 transition-transform"
+                    >
+                      <Crown className="h-5 w-5 mr-2" />
+                      Upgrade to Pro – $6/month
+                    </Button>
+                  </motion.div>
                   <Button
                     variant="ghost"
                     onClick={onClose}
