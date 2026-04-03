@@ -1,6 +1,9 @@
 import { motion } from "framer-motion";
-import type { Win } from "@/lib/storage";
+import type { Win as StorageWin } from "@/lib/storage";
+import type { Win as HookWin } from "@/hooks/useWins";
 import { Trash2, Share2 } from "lucide-react";
+
+type Win = StorageWin | HookWin;
 import { getMoodTheme } from "@/lib/milestones";
 
 interface WinCardProps {
