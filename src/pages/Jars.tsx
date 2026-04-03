@@ -4,18 +4,23 @@ import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useJars } from "@/hooks/useJars";
+import { useWins, Win } from "@/hooks/useWins";
 import { useAuth } from "@/contexts/AuthContext";
 import { PaywallModal } from "@/components/PaywallModal";
-import { 
-  Plus, 
-  Cookie, 
-  Trash2, 
-  Edit2, 
-  Check, 
-  X, 
+import { WinCard } from "@/components/WinCard";
+import { Confetti } from "@/components/Confetti";
+import {
+  Plus,
+  Cookie,
+  Trash2,
+  Edit2,
+  Check,
+  X,
   Loader2,
   Lock,
-  Crown 
+  Crown,
+  ChevronDown,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -32,16 +37,70 @@ import {
 
 const FREE_JAR_LIMIT = 1;
 
+function JarWinsList({ jarId, isPro }: { jarId: string; isPro: boolean }) {
+  const { wins, loading, deleteWin } = useWins(jarId);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-6">
+        <Loader2 className="h-5 w-5 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (wins.length === 0) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="text-center py-6"
+      >
+        <p className="text-muted-foreground text-sm">
+          No wins in this jar yet. Add your first! ✨
+        </p>
+      </motion.div>
+    );
+  }
+
+  const handleDelete = async (id: string) => {
+    await deleteWin(id);
+    toast.success("Win removed");
+  };
+
+  return (
+    <div className="space-y-3 pt-2">
+      {wins.map((win, index) => (
+        <WinCard
+          key={win.id}
+          win={win}
+          index={index}
+          onDelete={handleDelete}
+        />
+      ))}
+    </div>
+  );
+}
+
 export default function Jars() {
   const { jars, loading, createJar, updateJar, deleteJar, activeJarId, setActiveJarId } = useJars();
+  const { wins: allWins, loading: allWinsLoading } = useWins();
   const { isPro } = useAuth();
   const [isCreating, setIsCreating] = useState(false);
   const [newJarName, setNewJarName] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
   const [showPaywall, setShowPaywall] = useState(false);
+  const [expandedJarId, setExpandedJarId] = useState<string | null>(null);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   const hasReachedLimit = !isPro && jars.length >= FREE_JAR_LIMIT;
+
+  // Count wins per jar
+  const winCountByJar = allWins.reduce<Record<string, number>>((acc, win) => {
+    const jId = win.jarId || "unassigned";
+    acc[jId] = (acc[jId] || 0) + 1;
+    return acc;
+  }, {});
 
   const handleCreateJar = async () => {
     if (!newJarName.trim()) {
@@ -53,6 +112,8 @@ export default function Jars() {
     if (result) {
       setNewJarName("");
       setIsCreating(false);
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 2000);
       toast.success("Jar created! 🫙");
     }
   };
@@ -82,6 +143,7 @@ export default function Jars() {
   const handleDeleteJar = async (id: string) => {
     const success = await deleteJar(id);
     if (success) {
+      if (expandedJarId === id) setExpandedJarId(null);
       toast.success("Jar deleted");
     }
   };
@@ -96,6 +158,10 @@ export default function Jars() {
     setEditingName("");
   };
 
+  const toggleExpand = (jarId: string) => {
+    setExpandedJarId((prev) => (prev === jarId ? null : jarId));
+  };
+
   if (loading) {
     return (
       <Layout>
@@ -108,6 +174,7 @@ export default function Jars() {
 
   return (
     <Layout>
+      <Confetti trigger={showConfetti} intensity="medium" />
       <PaywallModal
         isOpen={showPaywall}
         onClose={() => setShowPaywall(false)}
@@ -129,22 +196,15 @@ export default function Jars() {
             <Cookie className="h-5 w-5 text-primary" />
           </div>
           <p className="text-muted-foreground text-sm">
-            Organize your wins into categories
+            Tap a jar to see your wins inside
           </p>
-          <p className="text-muted-foreground/70 text-xs mt-1">
-            Group your wins by fitness, work, habits, or mindset.
-          </p>
-          
-          {/* Limit indicator for free users */}
+
           {!isPro && (
             <div className="mt-3 flex flex-col items-center gap-1">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-muted text-muted-foreground text-xs font-medium">
                 <Lock className="h-3 w-3" />
                 {jars.length}/{FREE_JAR_LIMIT} free jars
               </div>
-              <p className="text-muted-foreground/60 text-xs">
-                Pro lets you organize wins by life areas.
-              </p>
             </div>
           )}
         </motion.div>
@@ -184,9 +244,9 @@ export default function Jars() {
                   <Button size="icon" onClick={handleCreateJar}>
                     <Check className="h-4 w-4" />
                   </Button>
-                  <Button 
-                    size="icon" 
-                    variant="outline" 
+                  <Button
+                    size="icon"
+                    variant="outline"
                     onClick={() => {
                       setIsCreating(false);
                       setNewJarName("");
@@ -221,110 +281,160 @@ export default function Jars() {
         </motion.div>
 
         {/* Jars List */}
-        <div className="space-y-3">
+        <div className="space-y-4">
           <AnimatePresence mode="popLayout">
-            {jars.map((jar, index) => (
-              <motion.div
-                key={jar.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, x: -100 }}
-                transition={{ delay: index * 0.05 }}
-                className={`card-cozy p-4 ${
-                  activeJarId === jar.id ? "ring-2 ring-primary" : ""
-                }`}
-              >
-                <div className="flex items-center gap-3">
+            {jars.map((jar, index) => {
+              const isExpanded = expandedJarId === jar.id;
+              const winCount = winCountByJar[jar.id] || 0;
+
+              return (
+                <motion.div
+                  key={jar.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, x: -100 }}
+                  transition={{ delay: index * 0.05 }}
+                  layout
+                  className={`card-cozy overflow-hidden ${
+                    isExpanded ? "ring-2 ring-primary/50" : ""
+                  }`}
+                >
+                  {/* Jar Header */}
                   <motion.div
-                    whileHover={{ rotate: [0, -10, 10, 0] }}
-                    className="text-3xl"
+                    className="p-4 cursor-pointer flex items-center gap-3"
+                    onClick={() => {
+                      if (editingId !== jar.id) toggleExpand(jar.id);
+                    }}
+                    whileTap={{ scale: 0.98 }}
                   >
-                    🫙
+                    <motion.div
+                      className="text-3xl"
+                      animate={isExpanded ? { rotate: [0, -15, 15, -5, 0], scale: [1, 1.15, 1] } : {}}
+                      transition={{ duration: 0.5 }}
+                    >
+                      🫙
+                    </motion.div>
+
+                    {editingId === jar.id ? (
+                      <div className="flex-1 flex gap-2" onClick={(e) => e.stopPropagation()}>
+                        <Input
+                          value={editingName}
+                          onChange={(e) => setEditingName(e.target.value)}
+                          maxLength={100}
+                          className="flex-1"
+                          autoFocus
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") handleUpdateJar(jar.id);
+                            if (e.key === "Escape") cancelEditing();
+                          }}
+                        />
+                        <Button size="icon" onClick={() => handleUpdateJar(jar.id)}>
+                          <Check className="h-4 w-4" />
+                        </Button>
+                        <Button size="icon" variant="outline" onClick={cancelEditing}>
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-display font-semibold text-foreground">
+                            {jar.name}
+                          </h3>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <span className="text-xs text-muted-foreground font-medium">
+                              {winCount} {winCount === 1 ? "win" : "wins"}
+                            </span>
+                            {activeJarId === jar.id && (
+                              <span className="text-xs text-primary font-medium flex items-center gap-1">
+                                <Sparkles className="h-3 w-3" /> Active
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-8 w-8"
+                            onClick={() => setActiveJarId(jar.id)}
+                            title="Set as active jar"
+                          >
+                            <Sparkles className={`h-4 w-4 ${activeJarId === jar.id ? "text-primary" : "text-muted-foreground"}`} />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-8 w-8"
+                            onClick={() => startEditing(jar)}
+                          >
+                            <Edit2 className="h-4 w-4" />
+                          </Button>
+
+                          {jars.length > 1 && (
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  className="h-8 w-8 text-destructive hover:text-destructive"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Delete Jar?</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    This will delete "{jar.name}" and all wins inside it.
+                                    This action cannot be undone.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => handleDeleteJar(jar.id)}
+                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                  >
+                                    Delete
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          )}
+                        </div>
+
+                        {/* Expand chevron */}
+                        <motion.div
+                          animate={{ rotate: isExpanded ? 180 : 0 }}
+                          transition={{ duration: 0.3, type: "spring", stiffness: 300 }}
+                        >
+                          <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                        </motion.div>
+                      </>
+                    )}
                   </motion.div>
 
-                  {editingId === jar.id ? (
-                    <div className="flex-1 flex gap-2">
-                      <Input
-                        value={editingName}
-                        onChange={(e) => setEditingName(e.target.value)}
-                        maxLength={100}
-                        className="flex-1"
-                        autoFocus
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") handleUpdateJar(jar.id);
-                          if (e.key === "Escape") cancelEditing();
-                        }}
-                      />
-                      <Button size="icon" onClick={() => handleUpdateJar(jar.id)}>
-                        <Check className="h-4 w-4" />
-                      </Button>
-                      <Button size="icon" variant="outline" onClick={cancelEditing}>
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ) : (
-                    <>
-                      <div 
-                        className="flex-1 cursor-pointer"
-                        onClick={() => setActiveJarId(jar.id)}
+                  {/* Expanded Wins List */}
+                  <AnimatePresence>
+                    {isExpanded && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                        className="overflow-hidden"
                       >
-                        <h3 className="font-display font-semibold text-foreground">
-                          {jar.name}
-                        </h3>
-                        {activeJarId === jar.id && (
-                          <span className="text-xs text-primary font-medium">
-                            Active
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="flex gap-1">
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="h-8 w-8"
-                          onClick={() => startEditing(jar)}
-                        >
-                          <Edit2 className="h-4 w-4" />
-                        </Button>
-
-                        {jars.length > 1 && (
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button
-                                size="icon"
-                                variant="ghost"
-                                className="h-8 w-8 text-destructive hover:text-destructive"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Delete Jar?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  This will delete "{jar.name}" and all wins inside it. 
-                                  This action cannot be undone.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => handleDeleteJar(jar.id)}
-                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                >
-                                  Delete
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        )}
-                      </div>
-                    </>
-                  )}
-                </div>
-              </motion.div>
-            ))}
+                        <div className="px-4 pb-4 border-t border-border/30 mt-0">
+                          <JarWinsList jarId={jar.id} isPro={isPro} />
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              );
+            })}
           </AnimatePresence>
 
           {jars.length === 0 && (
