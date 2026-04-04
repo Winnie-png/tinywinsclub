@@ -266,7 +266,7 @@ export function WinJar({ wins, maxWins = 25, isLocked = false }: WinJarProps) {
             ))}
           </motion.div>
 
-          {/* Floating stars inside */}
+          {/* Floating mood emojis inside */}
           <div className="absolute inset-0 flex flex-wrap content-end justify-center gap-1 p-3 pb-5">
             {wins.slice(0, 14).map((win, index) => (
               <motion.span
@@ -282,7 +282,7 @@ export function WinJar({ wins, maxWins = 25, isLocked = false }: WinJarProps) {
                 className="relative"
               >
                 <motion.span
-                  className="inline-block"
+                  className="inline-block text-lg drop-shadow-[0_0_4px_hsl(40_85%_55%/0.5)]"
                   animate={{
                     y: [0, -3, 0, 2, 0],
                     rotate: [0, index % 2 === 0 ? 8 : -8, 0],
@@ -294,15 +294,7 @@ export function WinJar({ wins, maxWins = 25, isLocked = false }: WinJarProps) {
                     ease: "easeInOut",
                   }}
                 >
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="hsl(40 90% 55%)"
-                    className="drop-shadow-[0_0_5px_hsl(40_85%_55%/0.6)]"
-                  >
-                    <path d="M12 2l2.4 7.2H22l-6 4.8 2.4 7.2L12 16.4 5.6 21.2 8 14 2 9.2h7.6z" />
-                  </svg>
+                  {win.mood || "⭐"}
                 </motion.span>
               </motion.span>
             ))}
