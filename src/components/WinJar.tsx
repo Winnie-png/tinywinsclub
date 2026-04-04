@@ -1,6 +1,8 @@
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Win } from "@/hooks/useWins";
+import jarClosed from "@/assets/jar-closed.png";
+import jarOpen from "@/assets/jar-open.png";
 
 interface WinJarProps {
   wins: Win[];
@@ -8,68 +10,51 @@ interface WinJarProps {
   isLocked?: boolean;
 }
 
-interface Sparkle {
-  id: number;
-  x: number;
-  y: number;
-  size: number;
-  delay: number;
-}
-
 export function WinJar({ wins, maxWins = 25, isLocked = false }: WinJarProps) {
-  const fillPercentage = Math.min((wins.length / maxWins) * 100, 100);
   const [isOpen, setIsOpen] = useState(false);
-  const [sparkles, setSparkles] = useState<Sparkle[]>([]);
-  const [floatingStar, setFloatingStar] = useState(false);
+  const [burstEmojis, setBurstEmojis] = useState<{ id: number; x: number; y: number; emoji: string; delay: number }[]>([]);
+  const [floatingEmoji, setFloatingEmoji] = useState<string | null>(null);
 
   const handleTap = useCallback(() => {
     if (isOpen || isLocked) return;
     setIsOpen(true);
 
-    const newSparkles: Sparkle[] = Array.from({ length: 8 }, (_, i) => ({
-      id: Date.now() + i,
-      x: (Math.random() - 0.5) * 80,
-      y: -20 + (Math.random() - 0.5) * 40,
-      size: 4 + Math.random() * 8,
-      delay: i * 0.03,
-    }));
-    setSparkles(newSparkles);
-    setFloatingStar(true);
+    // Pick random mood emojis from wins for the burst
+    const emojis = wins.length > 0
+      ? Array.from({ length: 6 }, (_, i) => ({
+          id: Date.now() + i,
+          x: (Math.random() - 0.5) * 100,
+          y: -30 + (Math.random() - 0.5) * 40,
+          emoji: wins[Math.floor(Math.random() * wins.length)]?.mood || "✨",
+          delay: i * 0.04,
+        }))
+      : [];
+    setBurstEmojis(emojis);
+    setFloatingEmoji(wins.length > 0 ? wins[0]?.mood || "🌟" : "🌟");
 
     setTimeout(() => {
       setIsOpen(false);
-      setFloatingStar(false);
-      setTimeout(() => setSparkles([]), 400);
-    }, 600);
-  }, [isOpen, isLocked]);
+      setFloatingEmoji(null);
+      setTimeout(() => setBurstEmojis([]), 400);
+    }, 650);
+  }, [isOpen, isLocked, wins]);
 
   return (
     <div className="relative flex flex-col items-center">
-      {/* Pulsing glow behind jar when locked */}
+      {/* Pulsing glow when locked */}
       {isLocked && (
         <motion.div
           className="absolute z-0 rounded-full"
           style={{
-            width: 200,
-            height: 200,
-            top: 50,
-            left: "50%",
-            marginLeft: -100,
+            width: 200, height: 200, top: 30, left: "50%", marginLeft: -100,
             background: "radial-gradient(circle, hsl(40 90% 55% / 0.25) 0%, transparent 70%)",
           }}
-          animate={{
-            scale: [1, 1.15, 1],
-            opacity: [0.5, 0.8, 0.5],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
+          animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.8, 0.5] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
         />
       )}
 
-      {/* Ambient sparkles around jar */}
+      {/* Ambient floating mood emojis */}
       {wins.length > 0 && !isLocked && (
         <>
           {wins.slice(0, 4).map((win, i) => (
@@ -77,20 +62,11 @@ export function WinJar({ wins, maxWins = 25, isLocked = false }: WinJarProps) {
               key={`ambient-${i}`}
               className="absolute z-0 text-base"
               style={{
-                left: `${i % 2 === 0 ? 10 + i * 5 : 75 - i * 5}%`,
-                top: `${10 + i * 15}%`,
+                left: `${i % 2 === 0 ? 8 + i * 6 : 78 - i * 6}%`,
+                top: `${5 + i * 18}%`,
               }}
-              animate={{
-                opacity: [0, 0.8, 0],
-                scale: [0.5, 1, 0.5],
-                rotate: [0, 180, 360],
-              }}
-              transition={{
-                duration: 2.5 + i * 0.5,
-                repeat: Infinity,
-                delay: i * 0.8,
-                ease: "easeInOut",
-              }}
+              animate={{ opacity: [0, 0.7, 0], scale: [0.5, 1, 0.5], y: [0, -8, 0] }}
+              transition={{ duration: 2.5 + i * 0.5, repeat: Infinity, delay: i * 0.8, ease: "easeInOut" }}
             >
               {win.mood || "✨"}
             </motion.div>
@@ -98,209 +74,100 @@ export function WinJar({ wins, maxWins = 25, isLocked = false }: WinJarProps) {
         </>
       )}
 
+      {/* Tap area with jar image */}
       <motion.div
-        className={`relative w-56 h-64 select-none ${isLocked ? "cursor-not-allowed" : "cursor-pointer"}`}
-        whileTap={isLocked ? {} : { scale: 0.94 }}
+        className={`relative select-none ${isLocked ? "cursor-not-allowed" : "cursor-pointer"}`}
+        style={{ width: 220, height: 240, ...(isLocked ? { filter: "saturate(0.4) brightness(0.85)" } : {}) }}
+        whileTap={isLocked ? {} : { scale: 0.93 }}
         transition={{ type: "spring", stiffness: 400, damping: 15 }}
         onTap={handleTap}
-        style={isLocked ? { filter: "saturate(0.4) brightness(0.85)" } : {}}
       >
-        {/* Sparkle burst on tap - mood emojis */}
+        {/* Emoji burst on tap */}
         <AnimatePresence>
-          {sparkles.map((s, i) => (
+          {burstEmojis.map((b) => (
             <motion.div
-              key={s.id}
-              className="absolute z-30 text-sm"
-              style={{ left: "50%", top: "5%" }}
+              key={b.id}
+              className="absolute z-30 text-xl"
+              style={{ left: "50%", top: "8%" }}
               initial={{ opacity: 1, x: 0, y: 0, scale: 0.5 }}
-              animate={{ opacity: 0, x: s.x, y: s.y - 30, scale: 1.2 }}
+              animate={{ opacity: 0, x: b.x, y: b.y - 30, scale: 1.3 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.45, delay: s.delay, ease: "easeOut" }}
+              transition={{ duration: 0.5, delay: b.delay, ease: "easeOut" }}
             >
-              {wins.length > 0 ? wins[i % wins.length]?.mood || "✨" : "✨"}
+              {b.emoji}
             </motion.div>
           ))}
         </AnimatePresence>
 
         {/* Floating emoji on tap */}
         <AnimatePresence>
-          {floatingStar && (
+          {floatingEmoji && (
             <motion.div
-              className="absolute z-30 text-2xl"
-              style={{ left: "50%", top: "10%" }}
+              className="absolute z-30 text-3xl"
+              style={{ left: "50%", top: "5%" }}
               initial={{ opacity: 0, y: 0, x: "-50%", scale: 0.6 }}
-              animate={{ opacity: [0, 1, 1, 0], y: -60, scale: [0.6, 1.2, 1, 0.8] }}
+              animate={{ opacity: [0, 1, 1, 0], y: -55, scale: [0.6, 1.3, 1, 0.8] }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.65, ease: "easeOut" }}
             >
-              {wins.length > 0 ? wins[0]?.mood || "🌟" : "🌟"}
+              {floatingEmoji}
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Golden Lid */}
-        <motion.div
-          className="absolute z-10"
-          style={{
-            top: 18,
-            left: "50%",
-            width: 100,
-            marginLeft: -50,
-            transformOrigin: "50% 100%",
-          }}
-          animate={{ rotateX: isOpen ? -38 : 0 }}
-          transition={{
-            type: "spring",
-            stiffness: isOpen ? 300 : 200,
-            damping: isOpen ? 12 : 18,
-          }}
-        >
-          <div
-            className="relative rounded-full overflow-hidden"
-            style={{
-              width: 100,
-              height: 28,
-              background: "linear-gradient(180deg, hsl(40 85% 62%) 0%, hsl(35 80% 52%) 60%, hsl(30 75% 45%) 100%)",
-              border: "2px solid hsl(40 70% 68% / 0.6)",
-              boxShadow: "0 4px 12px -2px hsl(30 60% 30% / 0.3), inset 0 2px 4px hsl(50 90% 80% / 0.5), inset 0 -1px 3px hsl(30 70% 30% / 0.2)",
-            }}
-          >
-            <div
-              className="absolute rounded-full"
-              style={{
-                top: 5,
-                left: "15%",
-                width: "70%",
-                height: 6,
-                background: "linear-gradient(90deg, transparent, hsl(50 90% 80% / 0.6), transparent)",
-                borderRadius: "50%",
-              }}
-            />
-            <div
-              className="absolute rounded-full"
-              style={{
-                top: 14,
-                left: "20%",
-                width: "60%",
-                height: 4,
-                background: "linear-gradient(90deg, transparent, hsl(40 80% 65% / 0.4), transparent)",
-              }}
-            />
-          </div>
-        </motion.div>
+        {/* Jar image — toggles between closed and open */}
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={isOpen ? "open" : "closed"}
+            src={isOpen ? jarOpen : jarClosed}
+            alt="Win Jar"
+            width={512}
+            height={512}
+            className="absolute inset-0 w-full h-full object-contain z-[1] pointer-events-none"
+            initial={{ scale: 0.97, opacity: 0.8 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.97, opacity: 0.8 }}
+            transition={{ duration: 0.15 }}
+          />
+        </AnimatePresence>
 
-        {/* Jar Neck */}
+        {/* Mood emojis inside the jar */}
         <div
-          className="absolute z-[5]"
-          style={{
-            top: 36,
-            left: "50%",
-            width: 92,
-            height: 16,
-            marginLeft: -46,
-            background: "linear-gradient(180deg, hsl(210 50% 88% / 0.7) 0%, hsl(210 45% 85% / 0.5) 100%)",
-            borderLeft: "1.5px solid hsl(210 60% 90% / 0.6)",
-            borderRight: "1.5px solid hsl(210 60% 90% / 0.6)",
-            borderRadius: "0 0 4px 4px",
-          }}
-        />
-
-        {/* Jar Body */}
-        <div
-          className="absolute left-1/2 -translate-x-1/2 overflow-hidden"
-          style={{
-            top: 46,
-            width: 180,
-            height: 190,
-            borderRadius: "40% 40% 45% 45% / 30% 30% 50% 50%",
-            background: "linear-gradient(135deg, hsl(210 55% 92% / 0.75) 0%, hsl(210 40% 88% / 0.5) 30%, hsl(210 50% 90% / 0.65) 60%, hsl(210 55% 92% / 0.75) 100%)",
-            border: "2px solid hsl(210 60% 92% / 0.7)",
-            boxShadow: `
-              0 12px 32px -8px hsl(210 30% 40% / 0.15),
-              0 4px 16px -4px hsl(210 30% 40% / 0.1),
-              inset 0 2px 4px hsl(0 0% 100% / 0.5),
-              inset 0 -4px 12px hsl(210 40% 60% / 0.1)
-            `,
-          }}
+          className="absolute z-[2] flex flex-wrap content-end justify-center gap-[3px] pointer-events-none"
+          style={{ left: 40, right: 40, top: 90, bottom: 45 }}
         >
-          {/* Golden glow fill */}
-          <motion.div
-            className="absolute bottom-0 left-0 right-0"
-            initial={{ height: 0 }}
-            animate={{ height: `${fillPercentage}%` }}
-            transition={{ duration: 1.2, ease: "easeOut", delay: 0.3 }}
-            style={{
-              background: "linear-gradient(to top, hsl(40 80% 65% / 0.5) 0%, hsl(45 85% 70% / 0.3) 50%, hsl(50 80% 75% / 0.1) 100%)",
-              borderRadius: "0 0 45% 45% / 0 0 50% 50%",
-            }}
-          >
-            {[...Array(8)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute rounded-full"
-                style={{
-                  width: 3 + (i % 3) * 2,
-                  height: 3 + (i % 3) * 2,
-                  left: `${10 + i * 10}%`,
-                  bottom: `${10 + (i * 7) % 60}%`,
-                  background: "hsl(0 0% 100% / 0.6)",
-                  boxShadow: "0 0 4px hsl(45 80% 70% / 0.5)",
-                }}
+          {wins.slice(0, 12).map((win, index) => (
+            <motion.span
+              key={win.id}
+              initial={{ scale: 0, y: 30, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              transition={{
+                delay: 0.4 + index * 0.07,
+                type: "spring",
+                stiffness: 300,
+                damping: 14,
+              }}
+            >
+              <motion.span
+                className="inline-block text-[17px] drop-shadow-sm"
                 animate={{
-                  opacity: [0.3, 0.8, 0.3],
-                  scale: [0.8, 1.2, 0.8],
+                  y: [0, -2, 0, 1.5, 0],
+                  rotate: [0, index % 2 === 0 ? 6 : -6, 0],
                 }}
                 transition={{
-                  duration: 2 + i * 0.3,
+                  duration: 3 + (index % 3) * 0.5,
                   repeat: Infinity,
-                  delay: i * 0.4,
+                  delay: index * 0.2,
                   ease: "easeInOut",
                 }}
-              />
-            ))}
-          </motion.div>
-
-          {/* Floating mood emojis inside */}
-          <div className="absolute inset-0 flex flex-wrap content-end justify-center gap-1 p-3 pb-5">
-            {wins.slice(0, 14).map((win, index) => (
-              <motion.span
-                key={win.id}
-                initial={{ scale: 0, y: 40, opacity: 0 }}
-                animate={{ scale: 1, y: 0, opacity: 1 }}
-                transition={{
-                  delay: 0.5 + index * 0.08,
-                  type: "spring",
-                  stiffness: 300,
-                  damping: 12,
-                }}
-                className="relative"
               >
-                <motion.span
-                  className="inline-block text-lg drop-shadow-[0_0_4px_hsl(40_85%_55%/0.5)]"
-                  animate={{
-                    y: [0, -3, 0, 2, 0],
-                    rotate: [0, index % 2 === 0 ? 8 : -8, 0],
-                  }}
-                  transition={{
-                    duration: 3.5 + (index % 3) * 0.5,
-                    repeat: Infinity,
-                    delay: index * 0.25,
-                    ease: "easeInOut",
-                  }}
-                >
-                  {win.mood || "⭐"}
-                </motion.span>
+                {win.mood || "⭐"}
               </motion.span>
-            ))}
-          </div>
-
-          {/* Glass shines */}
-          <div className="absolute pointer-events-none" style={{ top: "12%", left: "8%", width: 14, height: "45%", borderRadius: "50%", background: "linear-gradient(180deg, hsl(0 0% 100% / 0.55) 0%, hsl(0 0% 100% / 0.1) 100%)", filter: "blur(3px)" }} />
-          <div className="absolute pointer-events-none" style={{ top: "30%", left: "16%", width: 7, height: "20%", borderRadius: "50%", background: "hsl(0 0% 100% / 0.4)", filter: "blur(2px)" }} />
-          <div className="absolute pointer-events-none" style={{ top: "15%", right: "10%", width: 8, height: "30%", borderRadius: "50%", background: "linear-gradient(180deg, hsl(0 0% 100% / 0.3) 0%, transparent 100%)", filter: "blur(2px)" }} />
+            </motion.span>
+          ))}
         </div>
 
-        {/* Lock overlay when locked */}
+        {/* Lock overlay */}
         {isLocked && (
           <motion.div
             className="absolute z-20 inset-0 flex items-center justify-center"
@@ -317,26 +184,11 @@ export function WinJar({ wins, maxWins = 25, isLocked = false }: WinJarProps) {
             </motion.div>
           </motion.div>
         )}
-
-        {/* Shadow under jar */}
-        <div
-          className="absolute"
-          style={{
-            bottom: -4,
-            left: "50%",
-            width: 120,
-            height: 14,
-            marginLeft: -60,
-            borderRadius: "50%",
-            background: "hsl(210 20% 40% / 0.12)",
-            filter: "blur(6px)",
-          }}
-        />
       </motion.div>
 
       {/* Win Counter */}
       <motion.div
-        className="mt-4 text-center"
+        className="mt-3 text-center"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
