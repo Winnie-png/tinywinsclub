@@ -107,39 +107,35 @@ export function WinJar({ wins, maxWins = 25, isLocked = false }: WinJarProps) {
         onTap={handleTap}
         style={isLocked ? { filter: "saturate(0.4) brightness(0.85)" } : {}}
       >
-        {/* Sparkle burst on tap */}
+        {/* Sparkle burst on tap - mood emojis */}
         <AnimatePresence>
-          {sparkles.map((s) => (
+          {sparkles.map((s, i) => (
             <motion.div
               key={s.id}
-              className="absolute z-30"
+              className="absolute z-30 text-sm"
               style={{ left: "50%", top: "5%" }}
               initial={{ opacity: 1, x: 0, y: 0, scale: 0.5 }}
               animate={{ opacity: 0, x: s.x, y: s.y - 30, scale: 1.2 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.45, delay: s.delay, ease: "easeOut" }}
             >
-              <svg width={s.size * 2} height={s.size * 2} viewBox="0 0 24 24" fill="hsl(40 90% 55%)">
-                <path d="M12 2l2.4 7.2H22l-6 4.8 2.4 7.2L12 16.4 5.6 21.2 8 14 2 9.2h7.6z" />
-              </svg>
+              {wins.length > 0 ? wins[i % wins.length]?.mood || "✨" : "✨"}
             </motion.div>
           ))}
         </AnimatePresence>
 
-        {/* Floating star on tap */}
+        {/* Floating emoji on tap */}
         <AnimatePresence>
           {floatingStar && (
             <motion.div
-              className="absolute z-30"
+              className="absolute z-30 text-2xl"
               style={{ left: "50%", top: "10%" }}
               initial={{ opacity: 0, y: 0, x: "-50%", scale: 0.6 }}
               animate={{ opacity: [0, 1, 1, 0], y: -60, scale: [0.6, 1.2, 1, 0.8] }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.65, ease: "easeOut" }}
             >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="hsl(40 90% 55%)" className="drop-shadow-[0_0_8px_hsl(40_90%_55%/0.8)]">
-                <path d="M12 2l2.4 7.2H22l-6 4.8 2.4 7.2L12 16.4 5.6 21.2 8 14 2 9.2h7.6z" />
-              </svg>
+              {wins.length > 0 ? wins[0]?.mood || "🌟" : "🌟"}
             </motion.div>
           )}
         </AnimatePresence>
