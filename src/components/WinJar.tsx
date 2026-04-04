@@ -72,10 +72,10 @@ export function WinJar({ wins, maxWins = 25, isLocked = false }: WinJarProps) {
       {/* Ambient sparkles around jar */}
       {wins.length > 0 && !isLocked && (
         <>
-          {[...Array(4)].map((_, i) => (
+          {wins.slice(0, 4).map((win, i) => (
             <motion.div
               key={`ambient-${i}`}
-              className="absolute z-0"
+              className="absolute z-0 text-base"
               style={{
                 left: `${i % 2 === 0 ? 10 + i * 5 : 75 - i * 5}%`,
                 top: `${10 + i * 15}%`,
@@ -92,9 +92,7 @@ export function WinJar({ wins, maxWins = 25, isLocked = false }: WinJarProps) {
                 ease: "easeInOut",
               }}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="hsl(40 90% 55%)" className="drop-shadow-[0_0_4px_hsl(40_90%_55%/0.6)]">
-                <path d="M12 2l2.4 7.2H22l-6 4.8 2.4 7.2L12 16.4 5.6 21.2 8 14 2 9.2h7.6z" />
-              </svg>
+              {win.mood || "✨"}
             </motion.div>
           ))}
         </>
