@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import visaLogo from "@/assets/visa-logo.png";
+import mpesaLogo from "@/assets/mpesa-logo.png";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
@@ -182,24 +184,13 @@ export default function Pricing() {
               <div className="flex items-center justify-center gap-3 mt-3">
                 <span className="text-xs text-muted-foreground">Pays with</span>
                 <div className="flex items-center gap-2">
-                  {/* Visa */}
-                  <svg className="h-5 w-auto" viewBox="0 0 48 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="48" height="16" rx="2" fill="hsl(var(--muted))" />
-                    <text x="24" y="11.5" textAnchor="middle" fontSize="9" fontWeight="bold" fill="hsl(var(--primary))">VISA</text>
+                  <img src={visaLogo} alt="Visa" className="h-6 w-auto" loading="lazy" />
+                  <svg className="h-6 w-auto" viewBox="0 0 36 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="36" height="22" rx="3" fill="hsl(var(--muted))" />
+                    <circle cx="14" cy="11" r="7" fill="#EB001B" opacity="0.85" />
+                    <circle cx="22" cy="11" r="7" fill="#F79E1B" opacity="0.85" />
                   </svg>
-                  {/* Mastercard */}
-                  <svg className="h-5 w-auto" viewBox="0 0 32 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="32" height="16" rx="2" fill="hsl(var(--muted))" />
-                    <circle cx="13" cy="8" r="5" fill="#EB001B" opacity="0.8" />
-                    <circle cx="19" cy="8" r="5" fill="#F79E1B" opacity="0.8" />
-                  </svg>
-                  {/* M-Pesa */}
-                  <img 
-                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/512px-M-PESA_LOGO-01.svg.png" 
-                    alt="M-Pesa" 
-                    className="h-5"
-                    loading="lazy"
-                  />
+                  <img src={mpesaLogo} alt="M-Pesa" className="h-6 w-auto" loading="lazy" />
                 </div>
               </div>
             </motion.div>
