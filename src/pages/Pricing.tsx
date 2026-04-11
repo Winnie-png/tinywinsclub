@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import visaLogo from "@/assets/visa-logo.png";
+import mastercardLogo from "@/assets/mastercard-logo.png";
 import mpesaLogo from "@/assets/mpesa-logo.png";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/Layout";
@@ -185,11 +186,7 @@ export default function Pricing() {
                 <span className="text-xs text-muted-foreground">Pays with</span>
                 <div className="flex items-center gap-2">
                   <img src={visaLogo} alt="Visa" className="h-6 w-auto" loading="lazy" />
-                  <svg className="h-6 w-auto" viewBox="0 0 36 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="36" height="22" rx="3" fill="hsl(var(--muted))" />
-                    <circle cx="14" cy="11" r="7" fill="#EB001B" opacity="0.85" />
-                    <circle cx="22" cy="11" r="7" fill="#F79E1B" opacity="0.85" />
-                  </svg>
+                  <img src={mastercardLogo} alt="Mastercard" className="h-6 w-auto" loading="lazy" />
                   <img src={mpesaLogo} alt="M-Pesa" className="h-6 w-auto" loading="lazy" />
                 </div>
               </div>
