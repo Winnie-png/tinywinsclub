@@ -1,4 +1,6 @@
 import { motion } from "framer-motion";
+import visaLogo from "@/assets/visa-logo.png";
+import mpesaLogo from "@/assets/mpesa-logo.png";
 import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
@@ -157,23 +159,15 @@ export default function Profile() {
                  
                  <div className="flex items-center justify-center gap-3">
                    <span className="text-xs text-muted-foreground">Pay with</span>
-                   <div className="flex items-center gap-2">
-                     <svg className="h-4 w-auto" viewBox="0 0 48 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                       <rect width="48" height="16" rx="2" fill="hsl(var(--muted))" />
-                       <text x="24" y="11.5" textAnchor="middle" fontSize="8" fontWeight="bold" fill="hsl(var(--primary))">VISA</text>
-                     </svg>
-                     <svg className="h-4 w-auto" viewBox="0 0 32 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                       <rect width="32" height="16" rx="2" fill="hsl(var(--muted))" />
-                       <circle cx="13" cy="8" r="5" fill="#EB001B" opacity="0.8" />
-                       <circle cx="19" cy="8" r="5" fill="#F79E1B" opacity="0.8" />
-                     </svg>
-                     <img 
-                       src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/512px-M-PESA_LOGO-01.svg.png" 
-                       alt="M-Pesa" 
-                       className="h-4"
-                       loading="lazy"
-                     />
-                   </div>
+                    <div className="flex items-center gap-2">
+                      <img src={visaLogo} alt="Visa" className="h-5 w-auto" loading="lazy" />
+                      <svg className="h-5 w-auto" viewBox="0 0 36 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="36" height="22" rx="3" fill="hsl(var(--muted))" />
+                        <circle cx="14" cy="11" r="7" fill="#EB001B" opacity="0.85" />
+                        <circle cx="22" cy="11" r="7" fill="#F79E1B" opacity="0.85" />
+                      </svg>
+                      <img src={mpesaLogo} alt="M-Pesa" className="h-5 w-auto" loading="lazy" />
+                    </div>
                  </div>
                  
                  <p className="text-center text-xs text-primary font-medium">
