@@ -1,16 +1,32 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import visaLogo from "@/assets/visa-logo.png";
+import mastercardLogo from "@/assets/mastercard-logo.png";
 import mpesaLogo from "@/assets/mpesa-logo.png";
 import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { User, LogOut, Crown, Mail, AlertTriangle, Calendar } from "lucide-react";
+import { User, LogOut, Crown, Mail, AlertTriangle, Calendar, Trash2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export default function Profile() {
   const { user, isPro, proExpiresAt, signOut } = useAuth();
   const navigate = useNavigate();
+  const [deleting, setDeleting] = useState(false);
 
   const handleSignOut = async () => {
     await signOut();
@@ -19,6 +35,22 @@ export default function Profile() {
 
   const handleOneTimeClick = () => {
     window.open("https://paystack.shop/pay/tinywins-pro-access", "_blank", "noopener,noreferrer");
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      const { error } = await supabase.functions.invoke("delete-account");
+      if (error) throw error;
+      await signOut();
+      toast.success("Your account has been permanently deleted.");
+      navigate("/auth");
+    } catch (err: any) {
+      console.error("Account deletion error:", err);
+      toast.error("Failed to delete account. Please try again.");
+    } finally {
+      setDeleting(false);
+    }
   };
 
   const daysLeft = proExpiresAt
@@ -161,11 +193,7 @@ export default function Profile() {
                    <span className="text-xs text-muted-foreground">Pay with</span>
                     <div className="flex items-center gap-2">
                       <img src={visaLogo} alt="Visa" className="h-5 w-auto" loading="lazy" />
-                      <svg className="h-5 w-auto" viewBox="0 0 36 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="36" height="22" rx="3" fill="hsl(var(--muted))" />
-                        <circle cx="14" cy="11" r="7" fill="#EB001B" opacity="0.85" />
-                        <circle cx="22" cy="11" r="7" fill="#F79E1B" opacity="0.85" />
-                      </svg>
+                      <img src={mastercardLogo} alt="Mastercard" className="h-5 w-auto" loading="lazy" />
                       <img src={mpesaLogo} alt="M-Pesa" className="h-5 w-auto" loading="lazy" />
                     </div>
                  </div>
@@ -187,6 +215,38 @@ export default function Profile() {
             <LogOut className="h-4 w-4" />
             Sign Out
           </Button>
+
+          {/* Delete Account */}
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full gap-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+              >
+                <Trash2 className="h-4 w-4" />
+                Delete Account
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete your account?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will permanently delete your account and all your data including wins, jars, and Pro status. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDeleteAccount}
+                  disabled={deleting}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  {deleting ? "Deleting..." : "Yes, delete my account"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </motion.div>
       </div>
     </Layout>
