@@ -98,7 +98,7 @@ function PhoneFrame({
   );
 }
 
-function MobileNav({ active }: { active: "home" | "add" | "stats" | "profile" }) {
+function MobileNav({ active }: { active: "home" | "add" | "badges" | "stats" | "profile" }) {
   const items = [
     { key: "home", icon: Home, label: "Home" },
     { key: "add", icon: PlusCircle, label: "Add" },
@@ -360,7 +360,7 @@ export default function PortfolioShowcase() {
   return (
     <main className="min-h-screen bg-muted/40 px-5 py-10 sm:px-8 lg:px-12">
       <header className="mx-auto mb-10 max-w-6xl border-b border-border pb-6">
-        <p className="mb-2 text-xs font-bold uppercase tracking-widest text-primary">Tiny Wins Club</p>
+        <p className="mb-2 text-xs font-bold uppercase text-primary">Tiny Wins Club</p>
         <h1 className="text-3xl font-display font-bold text-foreground sm:text-4xl">Product screen showcase</h1>
         <nav className="mt-5 flex flex-wrap gap-x-5 gap-y-2" aria-label="Showcase screens">
           {frameLabels.map(([id, number, label]) => (
