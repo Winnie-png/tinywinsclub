@@ -22,6 +22,7 @@ import Profile from "./pages/Profile";
 import WelcomePro from "./pages/WelcomePro";
 import Onboarding from "./pages/Onboarding";
 import NotFound from "./pages/NotFound";
+import PortfolioShowcase from "./pages/PortfolioShowcase";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,7 @@ const App = () => (
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/about" element={<About />} />
               <Route path="/welcome-pro" element={<WelcomePro />} />
+               <Route path="/portfolio-showcase" element={<PortfolioShowcase />} />
               
               {/* Protected routes */}
               <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
