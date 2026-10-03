@@ -1,9 +1,11 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
 import { motion } from "framer-motion";
+import html2canvas from "html2canvas";
 import {
   Award,
   Check,
   Crown,
+  Download,
   Flame,
   Home,
   Lightbulb,
@@ -78,13 +80,53 @@ function PhoneFrame({
   label: string;
   children: ReactNode;
 }) {
+  const frameRef = useRef<HTMLDivElement>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownload = async () => {
+    if (!frameRef.current || isDownloading) return;
+    setIsDownloading(true);
+    try {
+      const canvas = await html2canvas(frameRef.current, {
+        scale: 2,
+        backgroundColor: null,
+        useCORS: true,
+      });
+      const blob = await new Promise<Blob | null>((resolve) =>
+        canvas.toBlob(resolve, "image/png"),
+      );
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `tinywins-${id}.png`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   return (
     <section id={id} className="scroll-mt-8">
       <div className="mb-3 flex items-baseline gap-3 px-1">
         <span className="font-display text-xs font-bold text-primary">{number}</span>
         <h2 className="text-sm font-semibold text-foreground">{label}</h2>
+        <button
+          type="button"
+          onClick={handleDownload}
+          disabled={isDownloading}
+          aria-label={`Download ${label} as PNG`}
+          className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-border/60 px-3 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground disabled:opacity-50"
+        >
+          <Download className="h-3 w-3" />
+          {isDownloading ? "Saving…" : "PNG"}
+        </button>
       </div>
-      <div className="mx-auto w-full max-w-[390px] overflow-hidden rounded-[28px] border-[6px] border-foreground/90 bg-background shadow-lifted">
+      <div
+        ref={frameRef}
+        className="mx-auto w-full max-w-[390px] overflow-hidden rounded-[28px] border-[6px] border-foreground/90 bg-background shadow-lifted"
+      >
         <div className="flex h-7 items-center justify-between bg-card px-5 text-[10px] font-bold text-foreground">
           <span>9:41</span>
           <div className="h-2.5 w-16 rounded-full bg-foreground/90" aria-hidden="true" />
