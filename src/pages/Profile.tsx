@@ -33,8 +33,28 @@ export default function Profile() {
     navigate("/auth");
   };
 
-  const handleOneTimeClick = () => {
-    window.open("https://paystack.shop/pay/tinywins-pro-access", "_blank", "noopener,noreferrer");
+  const [loadingPayment, setLoadingPayment] = useState(false);
+
+  // Same app-managed one-time checkout used on /pricing (400 KES, 30 days)
+  const handleOneTimeClick = async () => {
+    if (!user) {
+      navigate("/auth?redirect=/profile");
+      return;
+    }
+    setLoadingPayment(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("initialize-payment", {
+        body: { plan: "one-time" },
+      });
+      if (error) throw error;
+      if (!data?.authorization_url) throw new Error("No payment URL received");
+      window.location.href = data.authorization_url;
+    } catch (err: any) {
+      console.error("Payment init error:", err);
+      toast.error("Failed to initialize payment. Please try again.");
+    } finally {
+      setLoadingPayment(false);
+    }
   };
 
   const handleDeleteAccount = async () => {
@@ -78,6 +98,7 @@ export default function Profile() {
                   size="sm"
                   className="ml-2 h-7 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
                   onClick={handleOneTimeClick}
+                  disabled={loadingPayment}
                 >
                   Renew
                 </Button>
@@ -175,17 +196,18 @@ export default function Profile() {
                 </h3>
               </div>
               <p className="text-sm text-muted-foreground mb-4">
-                Get unlimited wins, jars, insights, and more for just $6/month
+                400 KES for 30 days of Pro. One-time payment, no automatic renewal.
               </p>
               
                <div className="space-y-3">
                  <Button 
                    onClick={handleOneTimeClick}
+                   disabled={loadingPayment}
                    className="w-full h-14 font-display font-semibold rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg"
                  >
                    <div className="flex items-center justify-center gap-2.5 w-full">
                      <Crown className="h-5 w-5" />
-                     <span className="whitespace-nowrap">Unlock Pro – $6/month</span>
+                     <span className="whitespace-nowrap">{loadingPayment ? "Starting checkout..." : "Unlock Pro – 400 KES"}</span>
                    </div>
                  </Button>
                  
