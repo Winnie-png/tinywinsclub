@@ -42,9 +42,9 @@ export function PaywallModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.85, y: 30 }}
             transition={{ type: "spring", stiffness: 300, damping: 22 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
+            className="fixed inset-x-4 top-1/2 -translate-y-1/2 z-50 max-w-sm mx-auto"
           >
-            <div className="pointer-events-auto w-full max-w-sm max-h-[calc(100dvh-2rem)] overflow-y-auto overflow-x-hidden overscroll-contain bg-background rounded-3xl p-6 pb-8 shadow-2xl border border-border/50 relative">
+            <div className="bg-background rounded-3xl p-6 shadow-2xl border border-border/50 overflow-hidden relative">
               {/* Animated glow background */}
               <motion.div
                 className="absolute top-0 right-0 w-40 h-40 rounded-full -translate-y-1/2 translate-x-1/2"
